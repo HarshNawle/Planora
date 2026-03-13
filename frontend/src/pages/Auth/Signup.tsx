@@ -1,4 +1,4 @@
-import {  signupSchema } from "@/schema/schema"
+import { signupSchema } from "@/lib/schema"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { GravityStarsBackground } from "@/components/animate-ui/components/backgrounds/gravity-stars";
+import { useSignupMutation } from "@/hooks/use-auth";
+import { toast } from "sonner";
 
-type SignupFormData = z.infer<typeof signupSchema>
+export type SignupFormData = z.infer<typeof signupSchema>
 
 const Signup = () => {
     const form = useForm<SignupFormData>({
@@ -22,14 +24,24 @@ const Signup = () => {
         },
     });
 
-    const handleOnSubmit = (values: SignupFormData) => {
-        console.log(values);
+    const { mutate, isPending } = useSignupMutation();
 
+    const handleOnSubmit = (values: SignupFormData) => {
+        mutate(values, {
+            onSuccess: () => {
+                toast.success("Account created successfully")
+            },
+            onError: (error: any) => {
+                const errorMessage = error.response?.data?.message || "An error occured";
+                console.log(error);
+                toast.error(errorMessage);
+            }
+        });
     }
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-4" >
-            <GravityStarsBackground mouseGravity="repel" starsInteraction={true} 
-            className="absolute -z-10 inset-0 flex items-center justify-center rounded-xl" />
+            <GravityStarsBackground mouseGravity="repel" starsInteraction={true}
+                className="absolute -z-10 inset-0 flex items-center justify-center rounded-xl" />
             <Card className="max-w-md w-full shadow-xl" >
                 <CardHeader className="text-center mb-5" >
                     <CardTitle className="text-2xl font-bold" >Create Account</CardTitle>
@@ -40,21 +52,7 @@ const Signup = () => {
                         <form onSubmit={form.handleSubmit(handleOnSubmit)}
                             className="space-y-5"
                         >
-                            <FormField
-                                control={form.control}
-                                name='fullName'
-                                render={
-                                    ({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Full Name</FormLabel>
-                                            <FormControl>
-                                                <Input type="text" placeholder="John Snow" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )
-                                }
-                            />
+
                             <FormField
                                 control={form.control}
                                 name='email'
@@ -70,6 +68,23 @@ const Signup = () => {
                                     )
                                 }
                             />
+
+                            <FormField
+                                control={form.control}
+                                name='fullName'
+                                render={
+                                    ({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Full Name</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" placeholder="John Snow" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )
+                                }
+                            />
+
                             <FormField
                                 control={form.control}
                                 name='password'
@@ -101,8 +116,8 @@ const Signup = () => {
                                 }
                             />
 
-                            <Button type="submit" className="w-full cursor-pointer">
-                                Sign up
+                            <Button type="submit" className="w-full cursor-pointer" disabled={isPending}>
+                                {isPending ? "Signing up..." : "Signup"}
                             </Button>
                         </form>
                     </Form>

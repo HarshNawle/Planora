@@ -1,4 +1,4 @@
-import { logInSchema } from "@/schema/schema"
+import { logInSchema } from "@/lib/schema"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";

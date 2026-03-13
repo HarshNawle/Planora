@@ -2,7 +2,7 @@ import express, { urlencoded } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./DB/connectDB.js";
-import router from "./routes/authRoutes.js";
+import routes from "./routes/authRoutes.js";
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.use("/api/auth" , router)
+app.use("/api/auth" , routes)
 
 const PORT = process.env.PORT;
 
