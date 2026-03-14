@@ -6,7 +6,7 @@ import type z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GravityStarsBackground } from "@/components/animate-ui/components/backgrounds/gravity-stars";
 import { useSignupMutation } from "@/hooks/use-auth";
 import { toast } from "sonner";
@@ -14,6 +14,8 @@ import { toast } from "sonner";
 export type SignupFormData = z.infer<typeof signupSchema>
 
 const Signup = () => {
+    const navigate = useNavigate();
+
     const form = useForm<SignupFormData>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
@@ -29,11 +31,17 @@ const Signup = () => {
     const handleOnSubmit = (values: SignupFormData) => {
         mutate(values, {
             onSuccess: () => {
-                toast.success("Account created successfully")
+                toast.success("Email Verification Required", {
+                    description: "Please check your email for verification link. If you don't see it, please check your spam folder."
+                });
+
+                form.reset();
+                navigate("/login")
             },
             onError: (error: any) => {
                 const errorMessage = error.response?.data?.message || "An error occured";
                 console.log(error);
+                
                 toast.error(errorMessage);
             }
         });

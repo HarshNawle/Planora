@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-sgMail.setApiKey(process.env.SEND_GRID_API);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const fromEmail = process.env.FROM_EMAIL;
 
@@ -20,7 +20,13 @@ export const sendEmail = async (to, subject, html) => {
         console.log("Email sent successfully");
         return true;
     } catch (error) {
-        console.log("Error sending email: ", error);
+        console.error("Error sending email:");
+        if (error.response) {
+            console.error("Status code:", error.code);
+            console.error("Response body:", error.response.body); // <- key line
+        } else {
+            console.error(error);
+        }
         return false;
     }
 };
