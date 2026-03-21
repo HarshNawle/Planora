@@ -6,13 +6,17 @@ import type z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GravityStarsBackground } from "@/components/animate-ui/components/backgrounds/gravity-stars";
+import { useLoginMutation } from "@/hooks/use-auth";
+import { toast } from "sonner";
 
-type SigninFormData = z.infer<typeof logInSchema>
+type LoginInFormData = z.infer<typeof logInSchema>
 
 const Login = () => {
-    const form = useForm<SigninFormData>({
+    const navigate = useNavigate();
+
+    const form = useForm<LoginInFormData>({
         resolver: zodResolver(logInSchema),
         defaultValues: {
             email: "",
@@ -20,8 +24,26 @@ const Login = () => {
         },
     });
 
-    const handleOnSubmit = (values: SigninFormData) => {
-        console.log(values);
+    const { mutate , isPending } = useLoginMutation();
+
+    const handleOnSubmit = (values: LoginInFormData) => {
+        mutate(values, {
+            onSuccess: () => {
+                toast.success("Email Verification Required", {
+                    description: "Please check your email for verification link. If you don't see it, please check your spam folder."
+                });
+
+                form.reset();
+                navigate("/auth/login")
+            },
+            onError: (error: any) => {
+                const errorMessage =
+                    error.response?.data?.message || "An error occured";
+                console.log(error);
+
+                toast.error(errorMessage);
+            }
+        });
 
     }
     return (

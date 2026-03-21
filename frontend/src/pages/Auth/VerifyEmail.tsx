@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import {  CheckCircle, Loader, XCircle } from "lucide-react"
 import { Button } from '@/components/ui/button';
+import { useVerifyEmailMutation } from '@/hooks/use-auth';
+import { toast } from 'sonner';
+
 const VerifyEmail = () => {
     // useSearchParams() is a hook that lets you access and modify the query 
     // parameters in the browser URL.
@@ -14,17 +17,32 @@ const VerifyEmail = () => {
     // category=mobile
     // page=2
     const [searchParams] = useSearchParams();
-
+    
+    const token = searchParams.get("token");
     const [isSuccess, setIsSuccess] = useState(false);
-    const isVerifying = false;
+    // const isVerifying = false;
+    const { mutate, isPending, isVerifying } = useVerifyEmailMutation();
 
     useEffect(() => {
-        const token = searchParams.get("token");
 
         if(!token) {
             setIsSuccess(false);
         } else {
-            setIsSuccess(true);
+            mutate( { token }, {
+              onSuccess: () => {
+                setIsSuccess(false);
+              },
+              onError: (error: any) => {
+                const errorMessage = 
+                 error.response?.data?.message || "An error occurred";
+                setIsSuccess(false);
+                console.log(error);
+
+                toast.error(errorMessage);
+                
+              }
+            } 
+          );
         }
     }, [searchParams]);
 

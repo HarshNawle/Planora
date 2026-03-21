@@ -36,12 +36,13 @@ const Signup = () => {
                 });
 
                 form.reset();
-                navigate("/login")
+                navigate("/auth/login")
             },
             onError: (error: any) => {
-                const errorMessage = error.response?.data?.message || "An error occured";
+                const errorMessage =
+                    error.response?.data?.message || "An error occured";
                 console.log(error);
-                
+
                 toast.error(errorMessage);
             }
         });

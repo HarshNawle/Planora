@@ -6,7 +6,7 @@ import { Toaster } from 'sonner';
 import React from 'react';
 import { AuthProvider } from './auth-context';
 
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 
 const ReactQueryProvider = ({ children }: { children: React.ReactNode }) => {
     return (

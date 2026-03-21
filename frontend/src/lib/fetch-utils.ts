@@ -76,7 +76,8 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use((response) => response,
     (error) => {
         if(error.response && error.response.status === 401) {
-            window.dispatchEvent(new Event("Unauthorized"));
+            // Dispatch a custom event to trigger logout in AuthProvider
+            window.dispatchEvent(new Event("force-logout"));
         }
         return Promise.reject(error);
     }
