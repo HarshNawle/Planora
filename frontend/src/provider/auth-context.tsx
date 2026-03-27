@@ -1,4 +1,5 @@
 import type { User } from "@/types";
+/* eslint-disable react-refresh/only-export-components */
 import React , { createContext, useContext, useEffect, useState } from "react";
 import { queryClient } from "./react-query-provider";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -8,7 +9,7 @@ interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
     isLoading: boolean;
-    login: (email: string, password: string) => Promise<void>;
+    login: (data: { token: string; user: User }) => Promise<void>;
     logout: () => Promise<void>;
 };
 
@@ -30,13 +31,25 @@ const AuthProvider = ({children} : { children: React.ReactNode }) => {
 
             const userInfo = localStorage.getItem("user");
 
-            if(userInfo) {
-                setUser(JSON.parse(userInfo));
-                setIsAuthenticated(true);
+            if (userInfo) {
+                try {
+                    setUser(JSON.parse(userInfo));
+                    setIsAuthenticated(true);
+                } catch {
+                    // localStorage might contain a corrupted value (e.g. "undefined")
+                    localStorage.removeItem("user");
+                    localStorage.removeItem("token");
+                    setUser(null);
+                    setIsAuthenticated(false);
+
+                    if (!isPublicRoute) {
+                        navigate("/auth/login");
+                    }
+                }
             } else {
                 setIsAuthenticated(false);
-                if(!isPublicRoute) {
-                    navigate("/login")
+                if (!isPublicRoute) {
+                    navigate("/auth/login")
                 }
             }
             setIsLoading(false);
@@ -48,7 +61,7 @@ const AuthProvider = ({children} : { children: React.ReactNode }) => {
     
 
     // login
-    const login = async (data: any) => {
+    const login = async (data: { token: string; user: User }) => {
         
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
@@ -71,7 +84,7 @@ const AuthProvider = ({children} : { children: React.ReactNode }) => {
     useEffect(() => {
         const handleLogout = () => {
             logout();
-            navigate("/login");
+            navigate("/auth/login");
         };
 
         window.addEventListener("force-logout", handleLogout);

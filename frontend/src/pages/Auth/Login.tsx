@@ -10,12 +10,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { GravityStarsBackground } from "@/components/animate-ui/components/backgrounds/gravity-stars";
 import { useLoginMutation } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { useAuth } from "@/provider/auth-context";
 
 type LoginInFormData = z.infer<typeof logInSchema>
 
 const Login = () => {
     const navigate = useNavigate();
-
+    const { login } = useAuth();
     const form = useForm<LoginInFormData>({
         resolver: zodResolver(logInSchema),
         defaultValues: {
@@ -28,13 +30,11 @@ const Login = () => {
 
     const handleOnSubmit = (values: LoginInFormData) => {
         mutate(values, {
-            onSuccess: () => {
-                toast.success("Email Verification Required", {
-                    description: "Please check your email for verification link. If you don't see it, please check your spam folder."
-                });
-
-                form.reset();
-                navigate("/auth/login")
+            onSuccess: (data) => {
+                login(data);
+                console.log(data);
+                toast.success("Login successfully");
+                navigate("/dashboard");
             },
             onError: (error: any) => {
                 const errorMessage =
@@ -97,8 +97,8 @@ const Login = () => {
                                 }
                             />
 
-                            <Button type="submit" className="w-full cursor-pointer">
-                                Login
+                            <Button type="submit" className="w-full cursor-pointer" disabled={isPending}>
+                                {isPending ? <Loader2 className="w-4 h-4 mr-2"/> : "Login"}
                             </Button>
                         </form>
                     </Form>

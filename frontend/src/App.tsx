@@ -6,6 +6,8 @@ import Login from "./pages/Auth/Login";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import ResetPassword from "./pages/Auth/ResetPassword";
 import VerifyEmail from "./pages/Auth/VerifyEmail";
+import DashBoard from "./pages/dashboard";
+import DashBoardLayout from "./pages/dashboard/dashboard-layout";
 
 function App() {
 
@@ -18,6 +20,11 @@ function App() {
         <Route path="forgot-password" element={<ForgotPassword/>} />
         <Route path="reset-password" element={<ResetPassword/>} />
         <Route path="verify-email" element={<VerifyEmail/>} />
+      </Route>
+
+      {/* Dashboard Routes */}
+      <Route path="/dashboard" element={<DashBoardLayout />}>
+        <Route index element={<DashBoard />} />
       </Route>
     </Routes>
   )

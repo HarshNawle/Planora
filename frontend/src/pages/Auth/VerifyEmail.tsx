@@ -21,20 +21,20 @@ const VerifyEmail = () => {
     const token = searchParams.get("token");
     const [isSuccess, setIsSuccess] = useState(false);
     // const isVerifying = false;
-    const { mutate, isPending, isVerifying } = useVerifyEmailMutation();
+    const { mutate, isPending } = useVerifyEmailMutation();
 
     useEffect(() => {
 
-        if(!token) {
-            setIsSuccess(false);
-        } else {
-            mutate( { token }, {
+        if (!token) return;
+
+        mutate({ token }, {
               onSuccess: () => {
-                setIsSuccess(false);
+                setIsSuccess(true);
               },
-              onError: (error: any) => {
-                const errorMessage = 
-                 error.response?.data?.message || "An error occurred";
+              onError: (error: unknown) => {
+                const errorMessage =
+                  (error as { response?: { data?: { message?: string } } })
+                    .response?.data?.message || "An error occurred";
                 setIsSuccess(false);
                 console.log(error);
 
@@ -42,9 +42,8 @@ const VerifyEmail = () => {
                 
               }
             } 
-          );
-        }
-    }, [searchParams]);
+        );
+    }, [token, mutate]);
 
     return (
         <div className='flex flex-col items-center justify-center h-screen'>
@@ -62,7 +61,7 @@ const VerifyEmail = () => {
                 <CardContent>
                   <div className='flex flex-col items-center justify-center py-4'>
                     {
-                      isVerifying ? (
+                      isPending ? (
                         <>
                           <Loader className='w-10 h-10 text-gray-500 animate-spin' />
                           <h3 className='text-lg font-semibold'>Verifying email...</h3>
@@ -70,7 +69,7 @@ const VerifyEmail = () => {
                             Please wait while we verify your email.
                           </p> 
 
-                          <Link to="/login" className='text-sm text-blue-500 mt-4' >
+                          <Link to="/auth/login" className='text-sm text-blue-500 mt-4' >
                             <Button variant="outline" >Back to Login</Button>
                           </Link>
                         </>
@@ -81,7 +80,7 @@ const VerifyEmail = () => {
                           <p className='text-sm text-gray-500'>
                             Your email has been verified successfully.
                           </p>
-                          <Link to="/login" className='text-sm text-blue-500 mt-4' >
+                          <Link to="/auth/login" className='text-sm text-blue-500 mt-4' >
                             <Button variant="outline" >Back to Login</Button>
                           </Link>
                         </>
@@ -93,7 +92,7 @@ const VerifyEmail = () => {
                             Your email verification failed. Please try again.
                           </p>
 
-                          <Link to="/login" className='text-sm text-blue-500 mt-4' >
+                          <Link to="/auth/login" className='text-sm text-blue-500 mt-4' >
                             <Button variant="outline" >Back to Login</Button>
                           </Link>
                         </>
