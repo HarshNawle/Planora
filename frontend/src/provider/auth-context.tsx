@@ -79,12 +79,12 @@ const AuthProvider = ({children} : { children: React.ReactNode }) => {
 
         // to remove cache and react-query
         queryClient.clear();
+        navigate("/auth/login");
     };
 
     useEffect(() => {
         const handleLogout = () => {
-            logout();
-            navigate("/auth/login");
+            void logout();
         };
 
         window.addEventListener("force-logout", handleLogout);
