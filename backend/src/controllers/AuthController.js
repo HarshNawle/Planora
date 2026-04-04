@@ -22,7 +22,7 @@ export const signup = async (req, res, next) => {
 
 
         if (user) {
-            res.status(400).json({ message: "Email address already in use" });
+            return res.status(400).json({ message: "Email address already in use" });
         }
 
         // res.cookie("jwt", createToken(email, user._id), {
@@ -239,7 +239,7 @@ export const resetPasswordRequest = async (req, res) => {
             userId: user._id,
         });
 
-        if(existingVerification && existingVerification.expiresAt > new Date() ) {
+        if (existingVerification && existingVerification.expiresAt > new Date()) {
             return res.status(400).json({
                 message: "Reset password request already sent",
             });
@@ -248,7 +248,7 @@ export const resetPasswordRequest = async (req, res) => {
         const resetPasswordToken = jwt.sign(
             {
                 userId: user._id,
-                purpose: "email-verification"
+                purpose: "reset-password"
             },
             process.env.JWT_SECRET_KEY,
             { expiresIn: "1h" }
@@ -260,9 +260,10 @@ export const resetPasswordRequest = async (req, res) => {
         });
 
         // send email
-        const resetPasswordLink = `${process.env.FRONTEND_URL}/auth/verify-email?token=${resetPasswordToken}`;
-        const emailBody = `<p>Click <a href="${resetPasswordLink}">here</a> to verify your email</p>`
-        const emailSubject = "Verify your email";
+        const resetPasswordLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=...`
+        const emailBody = `<p>Click <a href="${resetPasswordLink}">here</a> to reset your password</p>`
+        const emailSubject = "Reset your password";
+
 
         const isEmailSent = await sendEmail(email, emailSubject, emailBody);
 
@@ -281,13 +282,13 @@ export const resetPasswordRequest = async (req, res) => {
     }
 };
 
-export const verifyResetPasswordTokenAndResetPassword = async () => {
+export const verifyResetPasswordTokenAndResetPassword = async (req, res) => {
     try {
         const { token, newPassword, confirmPassword } = req.body;
 
         const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-        if(!payload) {
+        if (!payload) {
             return res.status(401).json({
                 message: "Unauthorized"
             });
@@ -295,32 +296,32 @@ export const verifyResetPasswordTokenAndResetPassword = async () => {
 
         const { userId, purpose } = payload;
 
-        if(purpose !== "reset-password") {
+        if (purpose !== "reset-password") {
             return res.status(401).json({ message: "Unauthorized" });
         }
-        
+
         const verification = await Verification.findOne({
             userId,
             token,
         });
 
-        if(!verification) {
+        if (!verification) {
             return res.status(401).json({ message: "Unauthorized" })
         }
 
         const isTokenExpired = verification.expiresAt < new Date();
 
-        if(isTokenExpired) {
+        if (isTokenExpired) {
             return res.status(401).json({ message: "Token expired" });
         }
 
         const user = await User.findById(userId);
 
-        if(!user) {
+        if (!user) {
             return res.status(400).json({ message: "Unauthorized" });
         }
 
-        if(newPassword !== confirmPassword) {
+        if (newPassword !== confirmPassword) {
             return res.status(400).json({ message: "Password do not match" });
         }
 
@@ -336,6 +337,7 @@ export const verifyResetPasswordTokenAndResetPassword = async () => {
         return res.status(200).json({ message: 'Password reset successfully' });
 
     } catch (error) {
-        
+        console.log(error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 }
