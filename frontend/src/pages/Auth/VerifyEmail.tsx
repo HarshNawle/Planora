@@ -52,7 +52,7 @@ const VerifyEmail = () => {
 
             <Card className='w-full max-w-md'>
                 {/* <CardHeader>
-                    <Link to="/login" className='flex items-center gap-2'>
+                    <Link to="/auth/login" className='flex items-center gap-2'>
                         <ArrowLeft className='w-4 h-4 mr-2' />
                         <p className='hover:underline' >Back to Login</p>
                     </Link>
