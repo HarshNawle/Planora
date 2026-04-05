@@ -16,34 +16,34 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
     const currentPath = useLocation().pathname;
     const isPublicRoute = publicRoute.includes(currentPath);
 
     // check if user is authenticated
-    useEffect(() => {
-        const checkAuth = async () => {
-            setIsLoading(true);
+    // useEffect(() => {
+    //     const checkAuth = async () => {
+    //         setIsLoading(true);
 
-            const userInfo = localStorage.getItem("user");
+    //         const userInfo = localStorage.getItem("user");
 
-            if (userInfo) {
-                setUser(JSON.parse(userInfo));
-                setIsAuthenticated(true);
-            } else {
-                setIsAuthenticated(false);
-                if (!isPublicRoute) {
-                    navigate("/auth/login")
-                }
-            }
-            setIsLoading(false);
-        };
+    //         if (userInfo) {
+    //             setUser(JSON.parse(userInfo));
+    //             setIsAuthenticated(true);
+    //         } else {
+    //             setIsAuthenticated(false);
+    //             if (!isPublicRoute) {
+    //                 navigate("/auth/login")
+    //             }
+    //         }
+    //         setIsLoading(false);
+    //     };
 
-        checkAuth();
-    }, []);
+    //     checkAuth();
+    // }, []);
 
 
     // useEffect(() => {
