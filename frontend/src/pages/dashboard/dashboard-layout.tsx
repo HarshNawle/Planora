@@ -4,6 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import Header from '../layout/header';
 import { useState } from 'react';
 import type { Workspace } from '@/types';
+import SidebarComponent from '../layout/SidebarComponent';
 
 const DashBoardLayout = () => {
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
@@ -31,6 +32,9 @@ const DashBoardLayout = () => {
   return (
     <div className="flex h-screen w-full">
       {/* SidebarComponent  */}
+      <SidebarComponent
+        currentWorkspace={currentWorkspace}
+      />
 
       <div className='flex flex-1 flex-col h-full'>
         {/* Header  */}

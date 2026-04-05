@@ -5,7 +5,6 @@ import WorkspaceAvatar from '@/components/workspace/workspace-avatar';
 import { useAuth } from '@/provider/auth-context';
 import type { Workspace } from '@/types'
 import { Bell, CircleUserRound, LogOut, PlusCircle } from 'lucide-react';
-import React from 'react'
 import { Link } from 'react-router-dom';
 
 interface HeaderProps {
@@ -21,7 +20,7 @@ const Header = ({
 }: HeaderProps) => {
 
     const { user, logout } = useAuth();
-    const workspaces = [{_id:"12313", color:"red", name:"Harsh"}];
+    const workspaces = [{ _id: "12313", color: "red", name: "Harsh" }];
 
     return (
         <div className='bg-background top-0 z-40 borber-b'>
@@ -53,24 +52,24 @@ const Header = ({
 
                     <DropdownMenuContent>
                         <DropdownMenuLabel>Workspace</DropdownMenuLabel>
-                        <DropdownMenuSeparator/>
+                        <DropdownMenuSeparator />
                         <DropdownMenuGroup>
                             {
                                 workspaces.map((ws) => (
                                     <DropdownMenuItem key={ws._id} onClick={() => onWorkspaceSelected(ws)} >
-                                        { ws.color && (
+                                        {ws.color && (
                                             <WorkspaceAvatar color={ws.color} name={ws.name} />
                                         )}
                                         <span className='text-black'>{ws.name}</span>
                                     </DropdownMenuItem>
-                                ) )
+                                ))
                             }
-                        </DropdownMenuGroup>
+                            </DropdownMenuGroup>
 
                         <DropdownMenuGroup>
                             <DropdownMenuItem onClick={onCreateWorkspace} >
                                 <PlusCircle className='size-4 mr-2' />
-                                Create Workspace 
+                                Create Workspace
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
 
