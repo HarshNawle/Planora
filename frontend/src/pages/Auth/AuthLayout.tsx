@@ -4,7 +4,7 @@ import { Outlet, Navigate } from 'react-router-dom'
 
 const AuthLayout = () => {
     const { isAuthenticated, isLoading } = useAuth();
-
+    
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-screen">

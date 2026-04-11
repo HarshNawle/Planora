@@ -5,6 +5,7 @@ import Header from '../layout/header';
 import { useState } from 'react';
 import type { Workspace } from '@/types';
 import SidebarComponent from '../layout/SidebarComponent';
+import CreateWorkspace from '@/components/workspace/createworkspace';
 
 const DashBoardLayout = () => {
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
@@ -50,6 +51,11 @@ const DashBoardLayout = () => {
           </div>
         </main>
       </div>
+
+      <CreateWorkspace
+        isCreatingWorkspace={isCreatingWorkspace}
+        setIsCreatingWorkspace={setIsCreatingWorkspace}
+      />
     </div>
   );
 };
