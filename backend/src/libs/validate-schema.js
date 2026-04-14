@@ -25,5 +25,18 @@ const resetPasswordSchema = z.object({
     confirmPassword: z.string().min(1, "Confirm Password is required")
 });
 
+const workSpaceSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    description: z.string().optional(),
+    color: z.string().min(1, "Color is required"),
+})
 
-export { registerSchema, loginSchema, verifyEmailSchema, emailSchema, resetPasswordSchema };
+
+export { 
+    registerSchema,
+    loginSchema,
+    verifyEmailSchema,
+    emailSchema,
+    resetPasswordSchema,
+    workSpaceSchema
+};

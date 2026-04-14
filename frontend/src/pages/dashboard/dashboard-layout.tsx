@@ -42,7 +42,7 @@ const DashBoardLayout = () => {
         <Header
           onWorkspaceSelected={handleWorkspaceSelected}
           selectedWorkspace={currentWorkspace}
-          onCreateWorkspace={() => setCurrentWorkspace(null)}
+          onCreateWorkspace={() => setIsCreatingWorkspace(true)}
         />
 
         <main className='flex-1 overflow-y-auto w-full h-full' >

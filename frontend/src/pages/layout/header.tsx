@@ -20,7 +20,8 @@ const Header = ({
 }: HeaderProps) => {
 
     const { user, logout } = useAuth();
-    const workspaces = [{ _id: "12313", color: "red", name: "Harsh" }];
+    const workspaces = [];
+    // const workspaces = [{ _id: "12313", color: "red", name: "Harsh" }];
 
     return (
         <div className='bg-background top-0 z-40 borber-b'>
@@ -82,15 +83,13 @@ const Header = ({
                     </Button>
 
                     <DropdownMenu>
-                        <DropdownMenuTrigger>
-                            <button className='w-8 h-8 border-none rounded-full'>
+                        <DropdownMenuTrigger className='w-8 h-8 border-none rounded-full' >
                                 <Avatar className='w-8 h-8'>
                                     <AvatarImage src={user?.profilePicture} />
                                     <AvatarFallback className='bg-primary text-white'>
                                         {user?.name?.charAt(0).toUpperCase()}HN
                                     </AvatarFallback>
                                 </Avatar>
-                            </button>
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent align='end'>
