@@ -1,14 +1,18 @@
 import express from "express";
 import { validateRequest } from "zod-express-middleware";
-import { workSpaceSchema } from "../libs/validate-schema";
+import { workSpaceSchema } from "../libs/validate-schema.js";
+import authMiddleware from "../middleware/auth-middleware.js";
+import createWorkspace from "../controllers/workspaceController.js";
 
 
-const routes = express.Router();
+const workspaceRoutes = express.Router();
 
-routes.post("/",
+workspaceRoutes.post("/",
+    authMiddleware,
     validateRequest({
         body: workSpaceSchema
     }),
-    createWorkspace);
+    createWorkspace
+);
 
-export default routes;
+export default workspaceRoutes;

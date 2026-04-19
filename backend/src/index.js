@@ -1,8 +1,8 @@
-import express, { urlencoded } from "express";
+import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./DB/connectDB.js";
-import routes from "./routes/authRoutes.js";
+import router from "./routes/index.js";
 
 dotenv.config();
 
@@ -17,7 +17,8 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.use("/api/auth" , routes)
+app.use("/api" , router);
+
 
 const PORT = process.env.PORT;
 

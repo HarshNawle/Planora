@@ -8,6 +8,9 @@ import { Textarea } from '../ui/textarea';
 import type z from 'zod';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
+import { useCreateWorkspace } from '@/hooks/use-workspace';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface CreateWorkspaceProps {
     isCreatingWorkspace: boolean;
@@ -26,15 +29,15 @@ export const colorOptions = [
     "#34495E", // Navy 
 ]
 
-type WorkspaceForm = z.infer<typeof workspaceSchema>;
+export type WorkspaceForm = z.infer<typeof workspaceSchema>;
 
 const CreateWorkspace = ({
     isCreatingWorkspace,
     setIsCreatingWorkspace
 }: CreateWorkspaceProps) => {
 
-    
-    const form = useForm<WorkspaceForm> ( {
+
+    const form = useForm<WorkspaceForm>({
         resolver: zodResolver(workspaceSchema),
         defaultValues: {
             name: "",
@@ -42,11 +45,22 @@ const CreateWorkspace = ({
             description: ""
         }
     });
-    const isPending = false;
+    const { mutate, isPending } = useCreateWorkspace();
+    const navigate = useNavigate();
 
-        const onSubmit = (data: WorkspaceForm) => {
-            console.log(data);
-        }
+    const onSubmit = (data: WorkspaceForm) => {
+        mutate(data, {
+            onSuccess: (data: any) => {
+                form.reset();
+                setIsCreatingWorkspace(false);
+                toast.success("Workspace created successfully");
+                navigate(`/workspaces/${data._id}`);
+            },
+            onError: (error) => {
+                console.log(error);
+            }
+        })
+    }
 
     return (
         <Dialog open={isCreatingWorkspace} onOpenChange={setIsCreatingWorkspace} >
@@ -64,20 +78,20 @@ const CreateWorkspace = ({
                             <FormField
                                 control={form.control}
                                 name="name"
-                                render={({field}) => (
+                                render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Name</FormLabel>
                                         <FormControl>
                                             <Input {...field} placeholder='Workspace Name' />
                                         </FormControl>
-                                        <FormMessage/>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
-                                name="description" 
-                                render={({field}) => (
+                                name="description"
+                                render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
@@ -87,21 +101,21 @@ const CreateWorkspace = ({
                                                 rows={3}
                                             />
                                         </FormControl>
-                                        <FormMessage/>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
-                                name="color" 
-                                render={({field}) => (
+                                name="color"
+                                render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Color</FormLabel>
                                         <FormControl>
                                             <div className='flex gap-3'>
                                                 {
                                                     colorOptions.map((color) => (
-                                                        <div 
+                                                        <div
                                                             key={color}
                                                             onClick={() => field.onChange(color)}
                                                             className={cn('w-6 h-6 rounded-full cursor-pointer hover:opacity-80 transition-all duration-300',
@@ -114,7 +128,7 @@ const CreateWorkspace = ({
                                                 }
                                             </div>
                                         </FormControl>
-                                        <FormMessage/>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />

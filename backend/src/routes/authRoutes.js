@@ -4,37 +4,37 @@ import {validateRequest} from "zod-express-middleware";
 import { emailSchema, loginSchema, registerSchema, resetPasswordSchema, verifyEmailSchema } from "../libs/validate-schema.js";
 import { login, resetPasswordRequest, signup, verifyEmail, verifyResetPasswordTokenAndResetPassword } from "../controllers/AuthController.js";
 
-const routes = express.Router();
+const authRoutes = express.Router();
 
-routes.post("/signup",
+authRoutes.post("/signup",
     validateRequest({
         body:registerSchema
     }),
     signup
 );
 
-routes.post("/login",
+authRoutes.post("/login",
     validateRequest({
         body:loginSchema
     }),
     login
 );
 
-routes.post("/verify-email",
+authRoutes.post("/verify-email",
     validateRequest({
         body: verifyEmailSchema,
     }),
     verifyEmail
 );
 
-routes.post("/reset-password-request",
+authRoutes.post("/reset-password-request",
     validateRequest({
         body: emailSchema
     }),
     resetPasswordRequest
 );
 
-routes.post("/reset-password",
+authRoutes.post("/reset-password",
     validateRequest({
         body: resetPasswordSchema
     }),
@@ -42,4 +42,4 @@ routes.post("/reset-password",
 );
 
 
-export default routes;
+export default authRoutes;

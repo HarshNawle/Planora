@@ -88,7 +88,7 @@ export const login = async (req, res, next) => {
                 userId: user._id,
             });
 
-            if (existingVerification && existingVerification.expiresAt > new Date()) {
+            if (existingVerification && (existingVerification.expiresAt > new Date())) {
                 return res.status(400).json({
                     message:
                         "Email is not verified. Please check your email for the verification link."
