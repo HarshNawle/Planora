@@ -1,7 +1,7 @@
 export interface User {
     _id: string;
     email: string;
-    name: string;
+    fullName: string;
     createdAt: Date;
     isEmailVerified: boolean;
     updatedAt: Date;

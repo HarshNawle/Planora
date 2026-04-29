@@ -1,6 +1,6 @@
 import Workspace from "../models/workspace.js";
 
-const createWorkspace = async (req,res,next) => {
+export const createWorkspace = async (req, res, next) => {
     try {
         const { name, description, color } = req.body;
         const workspace = await Workspace.create({
@@ -8,7 +8,7 @@ const createWorkspace = async (req,res,next) => {
             description,
             color,
             owner: req.user._id,
-            member: [
+            members: [
                 {
                     user: req.user._id,
                     role: "owner",
@@ -26,4 +26,27 @@ const createWorkspace = async (req,res,next) => {
     }
 };
 
-export default createWorkspace;
+export const getWorkspaces = async (req, res) => {
+    try {
+
+        const workspaces = await Workspace.find({
+            $or: [
+                { owner: req.user._id },
+                { "members.user": req.user._id },
+            ],
+        }).sort({ createdAt: -1 });
+
+        res.status(200).json(workspaces);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal server error"
+        })
+    }
+}
+
+// export  {
+//     createWorkspace,
+//     getWorkspaces
+// }

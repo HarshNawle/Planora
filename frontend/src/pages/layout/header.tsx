@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import WorkspaceAvatar from '@/components/workspace/workspace-avatar';
+import { useGetWorkSpaceQuery } from '@/hooks/use-workspace';
 import { useAuth } from '@/provider/auth-context';
 import type { Workspace } from '@/types'
 import { Bell, CircleUserRound, LogOut, PlusCircle } from 'lucide-react';
@@ -20,40 +21,35 @@ const Header = ({
 }: HeaderProps) => {
 
     const { user, logout } = useAuth();
-    const workspaces = [];
-    // const workspaces = [{ _id: "12313", color: "red", name: "Harsh" }];
+    const { data } = useGetWorkSpaceQuery();
+    const workspaces = (data ?? []) as Workspace[];
 
     return (
         <div className='bg-background top-0 z-40 borber-b'>
             <div className='h-14 flex items-center justify-between px-4 py-4 sm:px-4 lg:px-8'>
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild >
-                        <Button variant={"outline"} >
-                            {
-                                selectedWorkspace ? (
-                                    <>
-                                        {
-                                            selectedWorkspace.color && (
-                                                <WorkspaceAvatar
-                                                    color={selectedWorkspace.color}
-                                                    name={selectedWorkspace.name}
-                                                />
-                                            )
-                                        }
-                                        <span className='font-medium'>{selectedWorkspace?.name}</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <span>Select Workspace</span>
-                                    </>
-                                )
-                            }
+                    <DropdownMenuTrigger >
+                        <Button variant="outline" className="flex items-center gap-2">
+                            {selectedWorkspace ? (
+                                <>
+                                    <WorkspaceAvatar
+                                        color={selectedWorkspace.color}
+                                        name={selectedWorkspace.name}
+                                    />
+                                    <span className="font-medium">
+                                        {selectedWorkspace.name}
+                                    </span>
+                                </>
+                            ) : (
+                                <span>Select Workspace</span>
+                            )}
                         </Button>
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent>
                         <DropdownMenuLabel>Workspace</DropdownMenuLabel>
                         <DropdownMenuSeparator />
+                        
                         <DropdownMenuGroup>
                             {
                                 workspaces.map((ws) => (
@@ -65,7 +61,7 @@ const Header = ({
                                     </DropdownMenuItem>
                                 ))
                             }
-                            </DropdownMenuGroup>
+                        </DropdownMenuGroup>
 
                         <DropdownMenuGroup>
                             <DropdownMenuItem onClick={onCreateWorkspace} >
@@ -84,12 +80,12 @@ const Header = ({
 
                     <DropdownMenu>
                         <DropdownMenuTrigger className='w-8 h-8 border-none rounded-full' >
-                                <Avatar className='w-8 h-8'>
-                                    <AvatarImage src={user?.profilePicture} />
-                                    <AvatarFallback className='bg-primary text-white'>
-                                        {user?.name?.charAt(0).toUpperCase()}HN
-                                    </AvatarFallback>
-                                </Avatar>
+                            <Avatar className='w-8 h-8'>
+                                <AvatarImage src={user?.profilePicture} />
+                                <AvatarFallback className='bg-primary text-white'>
+                                    {user?.fullName?.charAt(0).toUpperCase()}
+                                </AvatarFallback>
+                            </Avatar>
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent align='end'>

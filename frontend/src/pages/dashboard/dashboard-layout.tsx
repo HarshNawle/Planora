@@ -6,6 +6,16 @@ import { useState } from 'react';
 import type { Workspace } from '@/types';
 import SidebarComponent from '../layout/SidebarComponent';
 import CreateWorkspace from '@/components/workspace/createworkspace';
+import { fetchData } from '@/lib/fetch-utils';
+
+export  const clientLoader = async () => {
+  try {
+    const [workspaces] = await Promise.all([fetchData("/workspaces")]);
+    return { workspaces };
+  } catch (error) {
+      console.log(error);
+  }
+}
 
 const DashBoardLayout = () => {
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);

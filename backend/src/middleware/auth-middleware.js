@@ -3,14 +3,15 @@ import User from "../models/user.js";
 
 const authMiddleware = async (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(" ")[1]; // Bearer Token
+        const authHeader = req.headers.authorization;
 
-        if(!token) {
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return res.status(401).json({
                 message: "Unauthorized"
             });
         }
 
+        const token = authHeader.split(" ")[1]; // Bearer Token
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const user = await User.findById(decoded.userId);
 
@@ -24,10 +25,22 @@ const authMiddleware = async (req, res, next) => {
         next();
 
     } catch (error) {
+        if (error.name === "TokenExpiredError") {
+            return res.status(401).json({
+                message: "Token expired"
+            });
+        }
+
+        if (error.name === "JsonWebTokenError") {
+            return res.status(401).json({
+                message: "Invalid token"
+            });
+        }
+
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             message: "Internal server error"
-        })
+        });
     } 
 }
 

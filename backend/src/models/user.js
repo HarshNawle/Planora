@@ -9,13 +9,13 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
     },
     password: { type: String, required: true, select: false },
-    fullName: { type: String, required: true, select: false },
-    profilePicture: { type: String, required: false, select: false },
-    isEmailVerified: { type: String, required: false, select: false },
-    lastLogin: { type: String, required: false, select: false },
-    is2FAEnabled: { type: String, required: false, select: false },
-    twoFAOtp: { type: String, select: false },
-    twoFAOtpExpires: { type: Date, select: false  }
+    fullName: { type: String, required: true, },
+    profilePicture: { type: String, required: false, },
+    isEmailVerified: { type: String, required: false,  },
+    lastLogin: { type: String, required: false, },
+    is2FAEnabled: { type: String, required: false,  },
+    twoFAOtp: { type: String,  },
+    twoFAOtpExpires: { type: Date, }
 },
 {
     timestamps: true,

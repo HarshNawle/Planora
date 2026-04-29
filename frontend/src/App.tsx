@@ -8,6 +8,7 @@ import ResetPassword from "./pages/Auth/ResetPassword";
 import VerifyEmail from "./pages/Auth/VerifyEmail";
 import DashBoard from "./pages/dashboard";
 import DashBoardLayout from "./pages/dashboard/dashboard-layout";
+import Workspaces from "./pages/dashboard/workspaces";
 
 function App() {
 
@@ -25,6 +26,11 @@ function App() {
       {/* Dashboard Routes */}
       <Route path="/dashboard" element={<DashBoardLayout />}>
         <Route index element={<DashBoard />} />
+      </Route>
+
+      {/* Workspace Routes */}
+      <Route path="/workspaces" element={<DashBoardLayout />}>
+        <Route index element={<Workspaces />} />
       </Route>
     </Routes>
   )
