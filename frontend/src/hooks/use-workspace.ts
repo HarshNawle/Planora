@@ -9,11 +9,20 @@ export const useCreateWorkspace  = () => {
     })
 };
 
-export const useGetWorkSpaceQuery = () => {
+export const useGetWorkspacesQuery = () => {
     return useQuery(
         {
-            queryKey: ["workspace"],
+            queryKey: ["workspaces"],
             queryFn: async () => fetchData("/workspaces"),
         }
     );
 };
+
+export const useGetWorkSpaceQuery = (workspaceId: string) => {
+    return useQuery(
+        {
+            queryKey: ["workspace", workspaceId],
+            queryFn: async () => fetchData(`/workspaces/${workspaceId}`)
+        }
+    )
+}

@@ -46,7 +46,25 @@ export const getWorkspaces = async (req, res) => {
     }
 }
 
-// export  {
-//     createWorkspace,
-//     getWorkspaces
-// }
+export const getWorkspaceDetails = async (req, res) => {
+    try {
+        const { workspaceId } = req.params;
+
+        const workspace = await Workspace.findById(workspaceId)
+        .populate(
+            "members.user",
+            "name email profilePicture"
+        );
+
+        if(!workspace) {
+            return res.status(404).json({
+                message: "Workspace not found",
+            })
+        }
+
+        res.status(200).json(workspace);
+
+    } catch (error) {
+        
+    }
+}
