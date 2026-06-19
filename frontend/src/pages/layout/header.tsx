@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import WorkspaceAvatar from '@/components/workspace/workspace-avatar';
-import { useGetWorkSpaceQuery } from '@/hooks/use-workspace';
+import { useGetWorkspacesQuery } from '@/hooks/use-workspace';
 import { useAuth } from '@/provider/auth-context';
 import type { Workspace } from '@/types'
 import { Bell, CircleUserRound, LogOut, PlusCircle } from 'lucide-react';
@@ -21,14 +21,14 @@ const Header = ({
 }: HeaderProps) => {
 
     const { user, logout } = useAuth();
-    const { data } = useGetWorkSpaceQuery();
+    const { data } = useGetWorkspacesQuery();
     const workspaces = (data ?? []) as Workspace[];
 
     return (
         <div className='bg-background top-0 z-40 borber-b'>
             <div className='h-14 flex items-center justify-between px-4 py-4 sm:px-4 lg:px-8'>
                 <DropdownMenu>
-                    <DropdownMenuTrigger >
+                    <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="flex items-center gap-2">
                             {selectedWorkspace ? (
                                 <>

@@ -32,7 +32,6 @@ const Login = () => {
         mutate(values, {
             onSuccess: (data) => {
                 login(data);
-                console.log(data);
                 toast.success("Login successfully");
                 navigate("/dashboard");
             },

@@ -17,10 +17,10 @@ const projectSchema = new mongoose.Schema({
         enum: ["Planning", "In Progress", "On Hold", "Completed", "Cancelled"],
         default: "Planning"
     },
+    tasks: [{type: Schema.Types.ObjectId, ref: "Task"}],
     statDate: {type: Date},
     dueDate: {type: Date},
     progress: {type: Number, min: 0, max: 100, default: 0},
-    tasks: [{type: Schema.Types.ObjectId, ref: "Task"}],
     members: [
         {
             user: { type: Schema.Types.ObjectId, ref: "User" },

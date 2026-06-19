@@ -41,12 +41,14 @@ const Workspaces = () => {
                     }
 
                     {
-                        workspaces.length === 0 && (<NoDataFound
-                            title="No workspace found"
-                            description="Create a new workspace to get started"
-                            buttonText="Create Workspace"
-                            buttonAction={() => setIsCreatingWorkspace(true)}
-                        />)
+                        workspaces.length === 0 && (
+                            <NoDataFound
+                                title="No workspace found"
+                                description="Create a new workspace to get started"
+                                buttonText="Create Workspace"
+                                buttonAction={() => setIsCreatingWorkspace(true)}
+                            />
+                        )
                     }
                 </div>
             </div>
