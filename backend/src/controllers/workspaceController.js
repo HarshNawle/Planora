@@ -58,7 +58,7 @@ export const getWorkspaceDetails = async (req, res) => {
         })
         .populate(
             "members.user",
-            "name email profilePicture"
+            "fullName email profilePicture"
         );
 
         if(!workspace) {
@@ -87,7 +87,7 @@ export const getWorkspaceProjects = async (req, res) => {
         })
         .populate(
             "members.user",
-            "name email profilePicture"
+            "fullName email profilePicture"
         );
 
         if(!workspace) {
@@ -99,9 +99,9 @@ export const getWorkspaceProjects = async (req, res) => {
         const projects = await Project.find({
             workspace: workspaceId,
             isArchived: false,
-            members: { $in: [req.user._id] },
+            // members: { $in: [req.user._id] }, // if user is member of PRoject 
         })
-        .populate("tasks", "status")
+        // .populate("tasks", "status")
         .sort({ createdAt: -1 });
 
         res.status(200).json({ projects, workspace });

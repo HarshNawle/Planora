@@ -30,7 +30,10 @@ const workSpaceSchema = new mongoose.Schema({
             joinedAt: { type: Date, default: Date.now() },
         }
     ],
-    project: [{ type: Schema.Types.ObjectId, ref: "user" }]
+    projects: {
+        type: [{ type: Schema.Types.ObjectId, ref: "Project" }],
+        default: [],
+    }
 }, {
     timestamps: true
 });

@@ -29,6 +29,28 @@ const workSpaceSchema = z.object({
     name: z.string().min(1, "Name is required"),
     description: z.string().optional(),
     color: z.string().min(1, "Color is required"),
+});
+
+const projectSchema = z.object({
+    title: z.string().min(3, "Title is required"),
+    description: z.string().optional(),
+    status: z.nativeEnum([
+        "Planning",
+        "In Progress",
+        "On Hold",
+        "Completed",
+        "Cancelled",
+    ]),
+    startDate: z.string(),
+    dueDate: z.string().optional(),
+    members: z.array(
+        z.object({
+            user: z.string(),
+            role: z.enum(["manager", "contributor", "viewer" ]),
+        })
+    )
+    .optional(),
+    tags: z.string().optional(),
 })
 
 
@@ -38,5 +60,6 @@ export {
     verifyEmailSchema,
     emailSchema,
     resetPasswordSchema,
-    workSpaceSchema
+    workSpaceSchema,
+    projectSchema
 };

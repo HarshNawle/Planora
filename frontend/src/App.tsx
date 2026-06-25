@@ -10,6 +10,7 @@ import DashBoard from "./pages/dashboard";
 import DashBoardLayout from "./pages/dashboard/dashboard-layout";
 import Workspaces from "./pages/dashboard/workspaces";
 import WorkspaceDetails from "./pages/dashboard/workspaces/workspace-details";
+import ProjectDetails from "./pages/dashboard/project/project-details";
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/dashboard" element={<DashBoard />} />
         <Route path="/workspaces" element={<Workspaces />} />
         <Route path="/workspaces/:workspaceId" element={<WorkspaceDetails />} />
+        <Route path="/workspaces/:workspaceId/projects/:projectId" element={<ProjectDetails/>} />
       </Route>
     </Routes>
   )

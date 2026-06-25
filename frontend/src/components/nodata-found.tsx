@@ -15,7 +15,7 @@ const NoDataFound = ({
   buttonAction
 }: NoDataFound) => {
   return (
-    <div className='w-full h-full flex flex-col items-center justify-center' >
+    <div className='flex flex-col items-center justify-center' >
       <LayoutGrid className='size-12 mx-auto text-muted-foreground' />
       <h3 className='mt-4 text-lg font-semibold' >{title}</h3>
 

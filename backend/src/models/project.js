@@ -18,7 +18,7 @@ const projectSchema = new mongoose.Schema({
         default: "Planning"
     },
     tasks: [{type: Schema.Types.ObjectId, ref: "Task"}],
-    statDate: {type: Date},
+    startDate: {type: Date},
     dueDate: {type: Date},
     progress: {type: Number, min: 0, max: 100, default: 0},
     members: [

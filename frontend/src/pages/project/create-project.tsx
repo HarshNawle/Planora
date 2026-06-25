@@ -1,19 +1,21 @@
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form,FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useCreateProject } from '@/hooks/use-project';
 import { projectSchema } from '@/lib/schema';
 import { ProjectStatus, type MembersProps } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { check, z } from 'zod';
 
 interface CreateProjectDialogProps{
@@ -45,10 +47,30 @@ const CreateProjectDialog = ({
         },
     });
 
-    const onSubmit = (data: CreateProjectFormData) =>{
-        console.log(data);
-        
-    }
+    const { mutate, isPending } = useCreateProject();
+
+    const onSubmit = (values: CreateProjectFormData) =>{
+        if(!workspaceId) return;
+
+        mutate(
+            {
+                projectData: values,
+                workspaceId
+            },
+            {
+                onSuccess: () => {
+                    toast.success("Project created successfully");
+                    form.reset();
+                    onOpenChange(false)
+                },
+                onError: (error: any) => {
+                    const errorMessage = error.respsonse.data.message;
+                    toast.error(errorMessage);
+                    console.log(error);
+                }
+            }
+        );
+    };
     
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange} >
@@ -75,7 +97,7 @@ const CreateProjectDialog = ({
                     />
                     <FormField
                         control={form.control}
-                        name='title'
+                        name='description'
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Project Description</FormLabel>
@@ -280,9 +302,42 @@ const CreateProjectDialog = ({
                                                                         id = {`member-${member.user._id}`}
                                                                     />
 
-                                                                    <Label>
-                                                                        
-                                                                    </Label>
+                                                                   <span className='truncate flex-1'>
+                                                                    {
+                                                                        member.user.fullName
+                                                                    }
+                                                                   </span>
+
+                                                                   {
+                                                                    selectedMember && (
+                                                                        <Select
+                                                                            value={selectedMember.role}
+                                                                            onValueChange={(role) => {
+                                                                                field.onChange(
+                                                                                    selectedMembers.map((m) => 
+                                                                                        m.user === member.user._id ? {
+                                                                                            ...m,
+                                                                                            role: role as | "contributor" | "viewer" | "manager"
+                                                                                        } : m
+                                                                                    )
+                                                                                );
+                                                                            }}  
+                                                                        >
+                                                                            <SelectTrigger>
+                                                                                <SelectValue placeholder="Select Role" />
+                                                                            </SelectTrigger>
+
+                                                                            <SelectContent>
+                                                                                <SelectGroup>
+                                                                                    <SelectItem value='manager' >Manager</SelectItem>
+                                                                                    <SelectItem value='contributor' >Contributor</SelectItem>
+                                                                                    <SelectItem value='viewer' >Viewer</SelectItem>
+                                                                                </SelectGroup>
+                                                                            </SelectContent>
+
+                                                                        </Select>
+                                                                    )
+                                                                   }
                                                                 </div>
                                                             )
                                                         }) }
@@ -295,6 +350,12 @@ const CreateProjectDialog = ({
                             )
                         }}
                     />
+
+                    <DialogFooter>
+                        <Button type='submit' disabled={isPending} >
+                            {isPending ? "Creating..." : "Create Project"}
+                        </Button>
+                    </DialogFooter>
                 </form>
             </Form>
 
