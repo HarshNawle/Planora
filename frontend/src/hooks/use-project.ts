@@ -22,7 +22,7 @@ export const useCreateProject = () => {
     });
 }
 
-export const usePRojectQuery = (projectId: string) => {
+export const useProjectQuery = (projectId: string) => {
     return useQuery({
         queryKey: ["project", projectId],
         queryFn: () => fetchData(`/projects/${projectId}/tasks`),

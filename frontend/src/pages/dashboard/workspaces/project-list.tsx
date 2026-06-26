@@ -1,4 +1,4 @@
-import NoDataFound from '@/components/nodata-found';
+import NoDataFound from '@/components/workspace/nodata-found';
 import ProjectCard from '@/pages/project/project-card';
 import type { Project } from '@/types';
 interface ProjectListProps {

@@ -1,5 +1,8 @@
+import CreateTaskDialog from '@/components/task/create-task-dialog';
+import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { usePRojectQuery } from '@/hooks/use-project';
+import BackButton from '@/components/workspace/back-button';
+import { useProjectQuery } from '@/hooks/use-project';
 import { getProjectProgress } from '@/lib';
 import type { Project, Task, TaskStatus } from '@/types';
 import { Loader } from 'lucide-react';
@@ -16,10 +19,10 @@ const ProjectDetails = () => {
     const [isCreateTask, setIsCreateTask] = useState(false);
     const [taskFilter, setTaskFilter] = useState<TaskStatus | "All">("All")
 
-    const {data, isLoading} = usePRojectQuery(projectId!) as {
+    const {data, isLoading} = useProjectQuery(projectId!) as {
       data: {
-        project: Project;
         tasks: Task[];
+        project: Project;
       };
       isLoading: boolean; 
     };
@@ -64,8 +67,21 @@ const ProjectDetails = () => {
               {projectProgress}%
             </span>
           </div>
+
+          <Button onClick={() => setIsCreateTask(true)} >Add Task</Button>
         </div>
       </div>
+
+      <div className='flex items-center justify-between'>
+
+      </div>
+
+      <CreateTaskDialog
+          open={isCreateTask}
+          onOpenChange={setIsCreateTask}
+          projectId={projectId!}
+          projectMembers={project.members as any}
+      />
     </div>
   )
 }

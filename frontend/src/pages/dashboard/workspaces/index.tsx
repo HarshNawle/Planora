@@ -1,4 +1,4 @@
-import NoDataFound from '@/components/nodata-found';
+import NoDataFound from '@/components/workspace/nodata-found';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import CreateWorkspace from '@/components/workspace/createworkspace';

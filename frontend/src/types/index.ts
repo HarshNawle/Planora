@@ -51,6 +51,11 @@ export interface Project {
 
 export type TasksPriority = "Low" | "Medium" | "High";
 export type TaskStatus = "To Do" | "In Progress" | "Done";
+export enum ProjectMemberRole {
+    MANAGER = "manager",
+    CONTRIBUTOR = "contributor",
+    VIEWER = "viewer",
+}
 
 export interface Subtask {
     _id: string;
