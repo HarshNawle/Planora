@@ -50,7 +50,7 @@ export interface Project {
 }
 
 export type TasksPriority = "Low" | "Medium" | "High";
-export type TaskStatus = "To Do" | "In Progress" | "Review" | "Done";
+export type TaskStatus = "To Do" | "In Progress" | "Done";
 
 export interface Subtask {
     _id: string;
