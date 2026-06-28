@@ -116,7 +116,7 @@ export const getProjectTasks = async (req, res) => {
         
         res.status(200).json({
             project,
-            task
+            tasks: task,
         });
     } catch (error) {
         console.log(error);

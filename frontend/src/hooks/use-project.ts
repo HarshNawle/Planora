@@ -25,6 +25,6 @@ export const useCreateProject = () => {
 export const useProjectQuery = (projectId: string) => {
     return useQuery({
         queryKey: ["project", projectId],
-        queryFn: () => fetchData(`/projects/${projectId}/tasks`),
+        queryFn: () => fetchData(`/project/${projectId}/tasks`),
     })
 }

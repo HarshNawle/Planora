@@ -26,8 +26,8 @@ projectRoutes.get(
         params: z.object({
             projectId: z.string()
         }),
-        getProjectDetail
-    })
+    }),
+    getProjectDetail
 );
 
 projectRoutes.get(
@@ -37,8 +37,8 @@ projectRoutes.get(
         params: z.object({
             projectId: z.string()
         }),
-        getProjectTasks
-    })
-)
+    }),
+    getProjectTasks
+);
 
 export default projectRoutes;
