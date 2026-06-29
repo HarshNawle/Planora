@@ -8,8 +8,8 @@ const router = express.Router();
 
 router.use("/auth", authRoutes);
 router.use("/workspaces", workspaceRoutes);
-router.use("/project", projectRoutes);
-router.use("/task", taskRoutes);
+router.use("/projects", projectRoutes);
+router.use("/tasks", taskRoutes);
 
 
 export default router;

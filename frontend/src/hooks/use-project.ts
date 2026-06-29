@@ -11,7 +11,7 @@ export const useCreateProject = () => {
             workspaceId: string;
         }) => 
             postData(
-                `/project/${data.workspaceId}/create-project`,
+                `/projects/${data.workspaceId}/create-project`,
                 data.projectData
             ),  
         onSuccess: (data: any) => {
@@ -25,6 +25,6 @@ export const useCreateProject = () => {
 export const useProjectQuery = (projectId: string) => {
     return useQuery({
         queryKey: ["project", projectId],
-        queryFn: () => fetchData(`/project/${projectId}/tasks`),
+        queryFn: () => fetchData(`/projects/${projectId}/tasks`),
     })
 }

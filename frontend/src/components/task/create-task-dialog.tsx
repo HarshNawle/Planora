@@ -5,8 +5,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import type z from 'zod';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Form } from 'react-router-dom';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -68,7 +67,7 @@ const CreateTaskDialog = ({
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Task</DialogTitle>
@@ -290,7 +289,7 @@ const CreateTaskDialog = ({
               </div>
             </div>
             <DialogFooter>
-              <Button>
+              <Button type="submit" disabled={isPending}>
                 {
                   isPending ? "Creating..." : "Create Task"
                 }

@@ -7,7 +7,7 @@ export const useCreateTask = () => {
 
     return useMutation({
         mutationFn: async (data: {projectId: string; taskData: CreateTaskFormData }) => 
-            postData(`/task/${data.projectId}/create-task`, data.taskData),
+            postData(`/tasks/${data.projectId}/create-task`, data.taskData),
             onSuccess: (data: any) => {
                 queryClient.invalidateQueries({
                     queryKey: ["project", data.project],
