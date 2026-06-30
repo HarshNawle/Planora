@@ -111,7 +111,7 @@ export const getProjectTasks = async (req, res) => {
             project: projectId,
             isArchived: false,
         })
-          .populate("assignees", "name profilePicture")
+          .populate("assignees", "fullName profilePicture")
           .sort({createdAt: -1});
         
         res.status(200).json({
