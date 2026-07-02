@@ -1,10 +1,16 @@
+import TaskTitle from '@/components/task/task-title';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import BackButton from '@/components/workspace/back-button';
 import { useTaskByIdQuery } from '@/hooks/use-task';
+import { useAuth } from '@/provider/auth-context';
 import type { Project, Task } from '@/types';
-import { Loader } from 'lucide-react';
+import { Eye, EyeOff, Loader } from 'lucide-react';
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const TaskDetails = () => {
+  const { user } = useAuth()
   const { taskId, projectId, workspaceId } = useParams<
     {
       taskId: string;
@@ -22,15 +28,15 @@ const TaskDetails = () => {
     isLoading: boolean;
   };
 
-  if(isLoading) {
+  if (isLoading) {
     return (
       <div>
-        <Loader/>
+        <Loader />
       </div>
     )
   };
 
-  if(!data) {
+  if (!data) {
     return (
       <div className='h-screen flex items-center justify-center'>
         <div className='text-2xl font-bold'></div>
@@ -38,8 +44,83 @@ const TaskDetails = () => {
     )
   };
 
+  const { task, project } = data;
+  const isUserWatching = task?.watchers?.some(
+    (watcher) => watcher._id.toString() === user?._id.toString()
+  );
+
+  const goBack = () => navigate(-1);
+  const members = task?.assignees || [];
+
   return (
-    <div>TaskDetail</div>
+    <div className='container mx-auto p-0 py-4 md:px-4'>
+      <div className='flex items-center justify-between flex-col md:flex-row md-6'>
+        <div className='flex md:items-center flex-col md:flex-row '>
+          <BackButton />
+          <h1 className='text-xl md:text-2xl font-bold' >{task.title}</h1>
+          {
+            task.isArchived && (
+              <Badge className='ml-2' variant={'outline'}>
+                Archived
+              </Badge>
+            )
+          }
+        </div>
+        <div className='flex space-x-2 mt-4 md:mt-0'>
+          <Button variant={'outline'} 
+            className='w-fit'
+            size="sm"
+            onClick={() => {}}
+          >
+            {
+              isUserWatching ? (
+                <>
+                  <EyeOff className='mr-2 size-4'/>
+                  Unwatch
+                </>
+              ) : (
+                <>
+                  <Eye className='mr-2 size-4' />
+                  Watch
+                </>
+              )
+            }
+          </Button>
+          <Button variant={'outline'} 
+            className='w-fit'
+            size="sm"
+            onClick={() => {}}
+          >
+            {task.isArchived ? "Unrachive" : "Archive"}
+          </Button>
+        </div>
+      </div>
+
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+        <div className='lg:col-span-2'>
+            <div className='bg-card rounded-lg p-6  shadow-sm mb-6'>
+              <div className='flex flex-col items-start justify-between md:flex-row mb-4'>
+                <div>
+                  <Badge
+                    variant={
+                      task.priority === "High"
+                      ? "destructive"
+                      : task.priority === "Medium"
+                      ? "default"
+                      : "outline"
+                    }
+                    className='mb-2 capitalize'
+                  >
+                    {task.priority} Priority
+                  </Badge>
+
+                  <TaskTitle title={task.title} taskId={task._id} />
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
   )
 }
 

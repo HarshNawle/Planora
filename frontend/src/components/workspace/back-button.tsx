@@ -1,4 +1,3 @@
-import React from 'react'
 import { Button } from '../ui/button'
 import { useNavigate } from 'react-router-dom'
 
@@ -9,7 +8,7 @@ const BackButton = () => {
         variant={"outline"}
         size="sm"
         onClick={() => navigate(-1)}
-        className='p-4 mr-4'
+        className='p-4 mr-4 cursor-pointer'
     >
         ← Back
     </Button>

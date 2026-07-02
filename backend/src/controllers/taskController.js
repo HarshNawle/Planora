@@ -1,3 +1,4 @@
+import recordActivity from "../libs/index.js";
 import Project from "../models/project.js";
 import Task from "../models/task.js";
 import Workspace from "../models/workspace.js";
@@ -59,13 +60,13 @@ export const createTask = async (req, res) => {
     }
 }
 
-export const getTaskById = async (req,res) => {
+export const getTaskById = async (req, res) => {
     try {
         const { taskId } = req.params;
 
         const task = await Task.findById(taskId)
-        .populate("assignees", "name profilePicture")
-        .populate("watchers", "name profilePicture");
+            .populate("assignees", "name profilePicture")
+            .populate("watchers", "name profilePicture");
 
         if (!task) {
             return res.status(404).json({
@@ -84,7 +85,7 @@ export const getTaskById = async (req,res) => {
             });
         }
 
-        return res.status(200).json({task,project});
+        return res.status(200).json({ task, project });
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -93,3 +94,111 @@ export const getTaskById = async (req,res) => {
     }
 }
 
+export const updateTaskTitle = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const { title } = req.body;
+
+        const task = await Task.findById(taskId);
+
+        if (!task) {
+            return res.status(404).json({
+                message: "Task not found",
+            });
+        }
+
+        const project = await Project.findById(task.project);
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found",
+            });
+        }
+
+        const isMember = project.members.some(
+            (member) => member.user.toString() === req.user._id.toString()
+        );
+
+        if (!isMember) {
+            return res.status(403).json({
+                message: "You are not a member of this project"
+            });
+        };
+
+        const oldTitle = task.title;
+        task.title = title;
+        await task.save();
+
+        // Record activity
+        await recordActivity(req.user._id, "updated_task", "Task", taskId,
+            { description: `updated task title from ${oldTitle} to ${title}` },
+        )
+
+        res.status(200).json(task);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+};
+
+export const updateTaskDescription = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const { description } = req.body;
+
+        const task = await Task.findById(taskId);
+
+        if (!task) {
+            return res.status(404).json({
+                message: "Task not found",
+            });
+        }
+
+        const project = await Project.findById(task.project).populate(
+            "members.user",
+            "name profilePicture"
+        );
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found",
+            });
+        }
+
+        const isMember = project.members.some(
+            (member) => member.user.toString() === req.user._id.toString()
+        );
+
+        if (!isMember) {
+            return res.status(403).json({
+                message: "You are not a member of this workspace"
+            });
+        };
+
+        const oldDescription =
+            task.description.substring(0, 50) +
+            (task.description.length > 50 ? "..." : "");
+        const newDescription =
+            task.description.substring(0, 50) +
+            (task.description.length > 50 ? "..." : "");
+
+
+
+        task.description = description;
+        await task.save();
+
+        // Record activity
+        await recordActivity(req.user._id, "updated_task", "Task", taskId,
+            { description: `updated task description from ${oldDescription} to ${newDescription}` },
+        )
+
+        res.status(200).json(task);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
