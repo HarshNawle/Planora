@@ -5,6 +5,7 @@ import BackButton from '@/components/workspace/back-button';
 import { useTaskByIdQuery } from '@/hooks/use-task';
 import { useAuth } from '@/provider/auth-context';
 import type { Project, Task } from '@/types';
+import { formatDistanceToNow } from 'date-fns';
 import { Eye, EyeOff, Loader } from 'lucide-react';
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -67,15 +68,15 @@ const TaskDetails = () => {
           }
         </div>
         <div className='flex space-x-2 mt-4 md:mt-0'>
-          <Button variant={'outline'} 
+          <Button variant={'outline'}
             className='w-fit'
             size="sm"
-            onClick={() => {}}
+            onClick={() => { }}
           >
             {
               isUserWatching ? (
                 <>
-                  <EyeOff className='mr-2 size-4'/>
+                  <EyeOff className='mr-2 size-4' />
                   Unwatch
                 </>
               ) : (
@@ -86,10 +87,10 @@ const TaskDetails = () => {
               )
             }
           </Button>
-          <Button variant={'outline'} 
+          <Button variant={'outline'}
             className='w-fit'
             size="sm"
-            onClick={() => {}}
+            onClick={() => { }}
           >
             {task.isArchived ? "Unrachive" : "Archive"}
           </Button>
@@ -98,26 +99,52 @@ const TaskDetails = () => {
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
         <div className='lg:col-span-2'>
-            <div className='bg-card rounded-lg p-6  shadow-sm mb-6'>
-              <div className='flex flex-col items-start justify-between md:flex-row mb-4'>
-                <div>
-                  <Badge
-                    variant={
-                      task.priority === "High"
+          <div className='bg-card rounded-lg p-6  shadow-sm mb-6'>
+            <div className='flex flex-col items-start justify-between md:flex-row mb-4'>
+              <div>
+                <Badge
+                  variant={
+                    task.priority === "High"
                       ? "destructive"
                       : task.priority === "Medium"
-                      ? "default"
-                      : "outline"
-                    }
-                    className='mb-2 capitalize'
-                  >
-                    {task.priority} Priority
-                  </Badge>
+                        ? "default"
+                        : "outline"
+                  }
+                  className='mb-2 capitalize'
+                >
+                  {task.priority} Priority
+                </Badge>
 
-                  <TaskTitle title={task.title} taskId={task._id} />
+                <TaskTitle title={task.title} taskId={task._id} />
+
+                <div className='text-sm text-muted-foreground'>
+                  Created at:{" "}
+                  {
+                    formatDistanceToNow(new Date(task.createdAt),
+                      {
+                        addSuffix: true,
+                      })
+                  }
                 </div>
               </div>
+
+              <div className='flex items-center gap-4 mt-2 md:mt-0'>
+                  <TaskStatusSelector
+                    status={task.status}
+                    taskId={task._id}
+                  />
+
+                  <Button 
+                    variant={'destructive'} 
+                    size="sm" 
+                    onClick={() => {}} c
+                    lassName='hidden md:block'
+                  >
+                    Delete Task
+                  </Button>
+              </div>
             </div>
+          </div>
         </div>
       </div>
     </div>
