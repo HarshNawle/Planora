@@ -1,3 +1,6 @@
+import TaskAssigneesSelector from '@/components/task/task-assignees-selector';
+import TaskDescription from '@/components/task/task-description';
+import TaskStatusSelector from '@/components/task/task-status-selector';
 import TaskTitle from '@/components/task/task-title';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -7,7 +10,6 @@ import { useAuth } from '@/provider/auth-context';
 import type { Project, Task } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { Eye, EyeOff, Loader } from 'lucide-react';
-import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const TaskDetails = () => {
@@ -144,6 +146,20 @@ const TaskDetails = () => {
                   </Button>
               </div>
             </div>
+
+            <div className='mb-6'>
+              <h3 className='text-sm font-medium text-muted-foreground mb-0'>Description</h3>
+              <TaskDescription
+                    description={task.description || ""}
+                    taskId={task._id}
+                  />
+            </div>
+            
+            <TaskAssigneesSelector
+              task={task}
+              assignees={task.assignees}
+              projectMembers={project.members as any}
+            />
           </div>
         </div>
       </div>

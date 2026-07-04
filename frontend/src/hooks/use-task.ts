@@ -1,5 +1,6 @@
 import type { CreateTaskFormData } from "@/components/task/create-task-dialog";
 import { fetchData, postData, updateData } from "@/lib/fetch-utils";
+import type { TaskStatus } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useCreateTask = () => {
@@ -35,4 +36,32 @@ export const useUpdateTaskTitleMutation = () => {
                 })
             }
     })
-}
+};
+
+export const useUpdateTaskStatusMutation = () => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: async (data: { status: TaskStatus; taskId: string }) => 
+            updateData(`/tasks/${data.taskId}/status`, {status: data.status}),
+            onSuccess: (data: any) => {
+                queryClient.invalidateQueries({
+                    queryKey: ["task", data._id]
+                })
+            }
+    })
+}; 
+
+export const useUpdateTaskDescriptionMutation = () => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: async (data: { description: string; taskId: string }) => 
+            updateData(`/tasks/${data.taskId}/description`, {description: data.description}),
+            onSuccess: (data: any) => {
+                queryClient.invalidateQueries({
+                    queryKey: ["task", data._id]
+                })
+            }
+    })
+};  

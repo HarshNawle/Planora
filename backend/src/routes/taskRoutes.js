@@ -3,7 +3,7 @@ import authMiddleware from "../middleware/auth-middleware.js";
 import { validateRequest } from "zod-express-middleware";
 import z from "zod";
 import { taskSchema } from "../libs/validate-schema.js";
-import { createTask, getTaskById, updateTaskDescription, updateTaskTitle } from "../controllers/taskController.js";
+import { createTask, getTaskById, updateTaskDescription, updateTaskStatus, updateTaskTitle } from "../controllers/taskController.js";
 
 const taskRoutes = express.Router();
 
@@ -31,6 +31,17 @@ taskRoutes.get(
 );
 
 taskRoutes.put(
+    "/:taskId/title",
+    authMiddleware,
+    validateRequest({
+        params: z.object({
+            taskId: z.string(),
+        }),
+    }),
+    updateTaskTitle
+);
+
+taskRoutes.put(
     "/:taskId/description",
     authMiddleware,
     validateRequest({
@@ -45,14 +56,19 @@ taskRoutes.put(
 );
 
 taskRoutes.put(
-    "/:taskId/title",
+    "/:taskId/status",
     authMiddleware,
     validateRequest({
         params: z.object({
             taskId: z.string(),
         }),
+        body: z.object({
+            status: z.string()
+        })
     }),
-    updateTaskTitle
+    updateTaskStatus 
 );
+
+
 
 export default taskRoutes;

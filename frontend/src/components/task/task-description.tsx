@@ -2,30 +2,31 @@ import { useState } from 'react'
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Edit } from 'lucide-react';
-import { useUpdateTaskTitleMutation } from '@/hooks/use-task';
 import { toast } from 'sonner';
+import { useUpdateTaskDescriptionMutation } from '@/hooks/use-task';
+import { Textarea } from '../ui/textarea';
 
-const TaskTitle = ({
-    title,
+const TaskDescription = ({
+    description,
     taskId,
 }: {
-    title: string;
+    description: string;
     taskId: string;
 }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [newTitle, setNewTitle] = useState(title);
-    const { mutate, isPending } = useUpdateTaskTitleMutation();
+    const [newDescription, setNewDescription] = useState(description);
+    const { mutate, isPending } = useUpdateTaskDescriptionMutation();
 
-    const updateTitle = () => {
+    const updateDescription = () => {
         mutate(
-            { taskId, title: newTitle },
+            { taskId, description: newDescription },
             {
                 onSuccess: () => {
                     setIsEditing(false);
-                    toast.success("Title updated successfully");
+                    toast.success("Description updated successfully");
                 },
                 onError: (error: any) => {
-                    const errorMessage = error.response?.data?.message || error.message || "Failed to update title";
+                    const errorMessage = error.response?.data?.message || error.message || "Failed to update description";
                     toast.error(errorMessage);
                     console.log(error);
                 }
@@ -37,14 +38,16 @@ const TaskTitle = ({
         <div className='flex items-center gap-2' >
             {
                 isEditing ? (
-                    <Input
-                        className='text-xl! font-semibold w-full min-w-3xl'
-                        value={newTitle}
-                        onChange={(e) => setNewTitle(e.target.value)}
+                    <Textarea
+                        className='w-full min-w-3xl'
+                        value={newDescription}
+                        onChange={(e) => setNewDescription(e.target.value)}
                         disabled={isPending}
                     />
                 ) : (
-                    <h2 className='text-xl flex-1 font-semibold' >{title}</h2>
+                    <div className='text-sm md:text-base text-pretty flex-1 text-muted-foreground'>
+                        {description}
+                    </div>
                 )
             }
 
@@ -52,7 +55,7 @@ const TaskTitle = ({
                 isEditing ? (
                     <Button
                         className='py-0' size={"sm"}
-                        onClick={updateTitle}
+                        onClick={updateDescription}
                         disabled={isPending}
                     >
                         Save
@@ -68,4 +71,4 @@ const TaskTitle = ({
     )
 }
 
-export default TaskTitle
+export default TaskDescription;
