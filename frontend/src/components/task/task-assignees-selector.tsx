@@ -1,6 +1,10 @@
 import type { ProjectMemberRole, Task, User } from '@/types'
 import React, { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Checkbox } from '../ui/checkbox';
+import { Button } from '../ui/button';
+import { useUpdateTaskAssigneesMutation } from '@/hooks/use-task';
+import { toast } from 'sonner';
 
 const TaskAssigneesSelector = ({
     task,
@@ -16,6 +20,8 @@ const TaskAssigneesSelector = ({
     );
     const [dropDownOpen, setDropDownOpen] = useState(false);
 
+    const { mutate, isPending } = useUpdateTaskAssigneesMutation();
+
     const handleSelectAll = () => {
         const allIds = projectMembers.map((m) => m.user._id);
         setSelectedIds(allIds);
@@ -23,6 +29,35 @@ const TaskAssigneesSelector = ({
 
     const handleUnSelectAll = () => {
         setSelectedIds([]);
+    }
+
+    const handleSelect = (id: string) => {
+        let newSelected: string[] = [];
+
+        if (selectedIds.includes(id)) {
+            newSelected = selectedIds.filter((sid) => sid !== id);
+        } else {
+            newSelected = [...selectedIds, id];
+        }
+
+        setSelectedIds(newSelected);
+    };
+    
+    const handleSave = () => {
+        mutate(
+            { taskId: task._id, assignees: selectedIds },
+            {
+                onSuccess: () => {
+                    setDropDownOpen(false);
+                    toast.success("Assignees updated successfully");
+                },
+                onError: (error: any) => {
+                    const errorrMessage = error.response?.data?.message || "Failed to update assignees";
+                    toast.error(errorrMessage);
+                    console.log(error); 
+                }
+            }
+        )
     }
 
     return (
@@ -59,7 +94,7 @@ const TaskAssigneesSelector = ({
                     onClick={() => setDropDownOpen(!dropDownOpen)}
                 >
                     {
-                        selectedIds.length===0 ? "Select assignees" : `${selectedIds.length} selected`
+                        selectedIds.length === 0 ? "Select assignees" : `${selectedIds.length} selected`
                     }
                 </button>
 
@@ -69,6 +104,48 @@ const TaskAssigneesSelector = ({
                             <div className='flex justify-between px-2 py-1 border-b'>
                                 <button className='cursor-pointer text-xs text-blue-600' onClick={handleSelectAll}>Select all</button>
                                 <button className='cursor-pointer text-xs text-red-600' onClick={handleUnSelectAll}>Unselect all</button>
+                            </div>
+
+                            {
+                                projectMembers.map((m) => (
+                                    <label
+                                        className='flex items-center px-3 py-2 cursor-pointer hover:bg-gray-50'
+                                        key={m.user._id}
+                                    >
+                                        <Checkbox
+                                            checked={selectedIds.includes(m.user._id)}
+                                            onCheckedChange={() => handleSelect(m.user._id)}
+                                            className='mr-2'
+                                        />
+
+                                        <Avatar className='mr-2 size-6'>
+                                            <AvatarImage src={m.user.profilePicture} />
+                                            <AvatarFallback>{m.user.fullName?.charAt(0) ?? 'U'}</AvatarFallback>
+                                        </Avatar>
+
+                                        <span className='text-sm'>{m.user.fullName}</span>
+                                    </label>
+                                ))
+                            }
+
+                            <div className='flex justify-between px-2 py-1'>
+                                <Button
+                                    variant={"outline"}
+                                    size={"sm"}
+                                    className='font-light'
+                                    onClickCapture={() => setDropDownOpen(false)}
+                                    disabled={isPending}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    size={"sm"}
+                                    className='font-light'
+                                    onClickCapture={() => handleSave()}
+                                    disabled={isPending}
+                                >
+                                    Save
+                                </Button>
                             </div>
                         </div>
                     )

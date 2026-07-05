@@ -1,6 +1,6 @@
 import type { CreateTaskFormData } from "@/components/task/create-task-dialog";
 import { fetchData, postData, updateData } from "@/lib/fetch-utils";
-import type { TaskStatus } from "@/types";
+import type { TaskStatus, TasksPriority } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useCreateTask = () => {
@@ -58,6 +58,34 @@ export const useUpdateTaskDescriptionMutation = () => {
     return useMutation({
         mutationFn: async (data: { description: string; taskId: string }) => 
             updateData(`/tasks/${data.taskId}/description`, {description: data.description}),
+            onSuccess: (data: any) => {
+                queryClient.invalidateQueries({
+                    queryKey: ["task", data._id]
+                })
+            }
+    })
+};  
+
+export const useUpdateTaskAssigneesMutation = () => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: async (data: { assignees: string[]; taskId: string }) => 
+            updateData(`/tasks/${data.taskId}/assignees`, {assignees: data.assignees}),
+            onSuccess: (data: any) => {
+                queryClient.invalidateQueries({
+                    queryKey: ["task", data._id]
+                })
+            }
+    })
+};  
+
+export const useUpdateTaskPriorityMutation = () => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: async (data: { priority: TasksPriority; taskId: string }) => 
+            updateData(`/tasks/${data.taskId}/priority`, {priority: data.priority}),
             onSuccess: (data: any) => {
                 queryClient.invalidateQueries({
                     queryKey: ["task", data._id]

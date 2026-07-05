@@ -1,5 +1,6 @@
 import TaskAssigneesSelector from '@/components/task/task-assignees-selector';
 import TaskDescription from '@/components/task/task-description';
+import TaskPrioritySelector from '@/components/task/task-priority-selector';
 import TaskStatusSelector from '@/components/task/task-status-selector';
 import TaskTitle from '@/components/task/task-title';
 import { Badge } from '@/components/ui/badge';
@@ -159,6 +160,11 @@ const TaskDetails = () => {
               task={task}
               assignees={task.assignees}
               projectMembers={project.members as any}
+            />
+            
+            <TaskPrioritySelector
+              task={task}
+              priority={task.priority}
             />
           </div>
         </div>
