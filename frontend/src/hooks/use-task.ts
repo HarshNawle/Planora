@@ -92,4 +92,33 @@ export const useUpdateTaskPriorityMutation = () => {
                 })
             }
     })
-};  
+}; 
+
+export const useAddSubTaskMutation = () => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: async (data: { title: string; taskId: string }) => 
+            postData(`/tasks/${data.taskId}/add-subtask`, {title: data.title}),
+            onSuccess: (data: any) => {
+                queryClient.invalidateQueries({
+                    queryKey: ["task", data._id]
+                })
+            }
+    })
+}; 
+
+export const useUpdateSubTaskMutation = () => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: async (data: { subTaskId: string; taskId: string; completed: boolean }) => 
+            postData(`/tasks/${data.taskId}/update-subtask/${data.subTaskId}`, {completed: data.completed}),
+            onSuccess: (data: any) => {
+                queryClient.invalidateQueries({
+                    queryKey: ["task", data._id]
+                })
+            }
+    })
+}; 
+

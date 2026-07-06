@@ -1,3 +1,4 @@
+import SubTasksDetails from '@/components/task/sub-tasks';
 import TaskAssigneesSelector from '@/components/task/task-assignees-selector';
 import TaskDescription from '@/components/task/task-description';
 import TaskPrioritySelector from '@/components/task/task-priority-selector';
@@ -163,8 +164,13 @@ const TaskDetails = () => {
             />
             
             <TaskPrioritySelector
-              task={task}
+              taskId={task._id}
               priority={task.priority}
+            />
+            
+            <SubTasksDetails
+              taskId={task._id}
+              subtasks={task.subtasks || []}
             />
           </div>
         </div>
