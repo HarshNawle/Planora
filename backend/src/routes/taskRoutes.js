@@ -3,7 +3,7 @@ import authMiddleware from "../middleware/auth-middleware.js";
 import { validateRequest } from "zod-express-middleware";
 import z from "zod";
 import { taskSchema } from "../libs/validate-schema.js";
-import { addSubTask, createTask, getTaskById, updateSubtask, updateTaskAssignees, updateTaskDescription, updateTaskPriority, updateTaskStatus, updateTaskTitle } from "../controllers/taskController.js";
+import { addComment, addSubTask, archivedTask, createTask, getActivityByResourceId, getCommentByTaskId, getTaskById, updateSubtask, updateTaskAssignees, updateTaskDescription, updateTaskPriority, updateTaskStatus, updateTaskTitle, watchTask } from "../controllers/taskController.js";
 
 const taskRoutes = express.Router();
 
@@ -66,7 +66,7 @@ taskRoutes.put(
             status: z.string()
         })
     }),
-    updateTaskStatus 
+    updateTaskStatus
 );
 
 taskRoutes.put(
@@ -97,7 +97,7 @@ taskRoutes.put(
     updateTaskPriority
 );
 
-taskRoutes.put(
+taskRoutes.post(
     "/:taskId/add-subtask",
     authMiddleware,
     validateRequest({
@@ -123,9 +123,66 @@ taskRoutes.put(
             completed: z.boolean()
         })
     }),
-    updateSubtask 
+    updateSubtask
 );
 
+taskRoutes.get(
+    "/:resourceId/activity",
+    authMiddleware,
+    validateRequest({
+        params: z.object({
+            resourceId: z.string(),
+        }),
+    }),
+    getActivityByResourceId
+);
+
+taskRoutes.get(
+    "/:taskId/comments",
+    authMiddleware,
+    validateRequest({
+        params: z.object({
+            taskId: z.string(),
+        }),
+    }),
+    getCommentByTaskId
+);
+
+taskRoutes.post(
+    "/:taskId/add-comment",
+    authMiddleware,
+    validateRequest({
+        params: z.object({
+            taskId: z.string(),
+        }),
+        body: z.object({
+            text: z.string()
+        })
+    }),
+    addComment 
+);
+
+taskRoutes.post(
+    "/:taskId/watch",
+    authMiddleware,
+    validateRequest({
+        params: z.object({
+            taskId: z.string(),
+        }),
+    }),
+    watchTask
+);
+
+taskRoutes.post(
+    "/:taskId/archived",
+    authMiddleware,
+    validateRequest({
+        params: z.object({
+            taskId: z.string(),
+        }),
+    }),
+    archivedTask
+);
 
 
 export default taskRoutes;

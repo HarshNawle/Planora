@@ -1,18 +1,22 @@
+import CommentSection from '@/components/task/comment-section';
 import SubTasksDetails from '@/components/task/sub-tasks';
+import TaskActivity from '@/components/task/task-activity';
 import TaskAssigneesSelector from '@/components/task/task-assignees-selector';
 import TaskDescription from '@/components/task/task-description';
 import TaskPrioritySelector from '@/components/task/task-priority-selector';
 import TaskStatusSelector from '@/components/task/task-status-selector';
 import TaskTitle from '@/components/task/task-title';
+import Watchers from '@/components/task/watchers';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import BackButton from '@/components/workspace/back-button';
-import { useTaskByIdQuery } from '@/hooks/use-task';
+import { useArchivedTaskMutation, useTaskByIdQuery, useWatchTaskMutation } from '@/hooks/use-task';
 import { useAuth } from '@/provider/auth-context';
 import type { Project, Task } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { Eye, EyeOff, Loader } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'sonner';
 
 const TaskDetails = () => {
   const { user } = useAuth()
@@ -32,6 +36,9 @@ const TaskDetails = () => {
     };
     isLoading: boolean;
   };
+
+  const { mutate: watchTask, isPending: isWatching } = useWatchTaskMutation();
+  const { mutate: archivedTask, isPending: isArchived } = useArchivedTaskMutation();
 
   if (isLoading) {
     return (
@@ -57,6 +64,31 @@ const TaskDetails = () => {
   const goBack = () => navigate(-1);
   const members = task?.assignees || [];
 
+  const handleWatchTask = () => {
+    watchTask(
+      { taskId: task._id },
+      {
+        onSuccess: () => {
+          toast.success("Task watched");
+        },
+        onError: () => {
+          toast.error("Failed to watch task")
+        }
+      }
+    )
+  }
+
+  const handleArchivedTask = () => {
+    archivedTask({ taskId: task._id }, {
+      onSuccess: () => {
+        toast.success("Task archived");
+      },
+      onError: () => {
+        toast.error("Failed to archive task")
+      }
+    });
+  }
+
   return (
     <div className='container mx-auto p-0 py-4 md:px-4'>
       <div className='flex items-center justify-between flex-col md:flex-row md-6'>
@@ -75,7 +107,8 @@ const TaskDetails = () => {
           <Button variant={'outline'}
             className='w-fit'
             size="sm"
-            onClick={() => { }}
+            onClick={handleWatchTask}
+            disabled={isWatching}
           >
             {
               isUserWatching ? (
@@ -94,16 +127,17 @@ const TaskDetails = () => {
           <Button variant={'outline'}
             className='w-fit'
             size="sm"
-            onClick={() => { }}
+            onClick={handleArchivedTask}
+            disabled={isArchived}
           >
-            {task.isArchived ? "Unrachive" : "Archive"}
+            {task.isArchived ? "Unarchive" : "Archive"}
           </Button>
         </div>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-        <div className='lg:col-span-2'>
-          <div className='bg-card rounded-lg p-6  shadow-sm mb-6'>
+      <div className='flex flex-col lg:flex-row gap-6'>
+        <div className='w-[70%] lg:col-span-2'>
+          <div className='bg-card rounded-lg p-6 shadow-sm mb-6'>
             <div className='flex flex-col items-start justify-between md:flex-row mb-4'>
               <div>
                 <Badge
@@ -133,46 +167,56 @@ const TaskDetails = () => {
               </div>
 
               <div className='flex items-center gap-4 mt-2 md:mt-0'>
-                  <TaskStatusSelector
-                    status={task.status}
-                    taskId={task._id}
-                  />
+                <TaskStatusSelector
+                  status={task.status}
+                  taskId={task._id}
+                />
 
-                  <Button 
-                    variant={'destructive'} 
-                    size="sm" 
-                    onClick={() => {}} c
-                    lassName='hidden md:block'
-                  >
-                    Delete Task
-                  </Button>
+                <Button
+                  variant={'destructive'}
+                  size="sm"
+                  onClick={() => { }} c
+                  lassName='hidden md:block'
+                >
+                  Delete Task
+                </Button>
               </div>
             </div>
 
             <div className='mb-6'>
               <h3 className='text-sm font-medium text-muted-foreground mb-0'>Description</h3>
               <TaskDescription
-                    description={task.description || ""}
-                    taskId={task._id}
-                  />
+                description={task.description || ""}
+                taskId={task._id}
+              />
             </div>
-            
+
             <TaskAssigneesSelector
               task={task}
               assignees={task.assignees}
               projectMembers={project.members as any}
             />
-            
+
             <TaskPrioritySelector
               taskId={task._id}
               priority={task.priority}
             />
-            
+
             <SubTasksDetails
               taskId={task._id}
               subtasks={task.subtasks || []}
             />
+
           </div>
+
+          <CommentSection taskId={task._id} members={project.members as any} />
+        </div>
+
+        {/* right side */}
+        <div className='w-[30%]'>
+          <Watchers watchers={task.watchers || []} />
+
+          <TaskActivity resourceId={task._id} />
         </div>
       </div>
     </div>

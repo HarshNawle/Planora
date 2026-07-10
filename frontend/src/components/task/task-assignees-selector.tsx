@@ -78,11 +78,11 @@ const TaskAssigneesSelector = ({
                                 >
                                     <Avatar>
                                         <AvatarImage src={m.user.profilePicture} />
-                                        <AvatarFallback>{m.user.fullName?.charAt(0) ?? 'U'}</AvatarFallback>
+                                        <AvatarFallback>{m.user.fullName?.charAt(0)}</AvatarFallback>
                                     </Avatar>
-                                    <span className='text-xs text-muted-foreground'>
+                                    <p className='text-xs text-muted-foreground'>
                                         {m.user.fullName}
-                                    </span>
+                                    </p>
                                 </div>
                             ))
                     )

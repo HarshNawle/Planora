@@ -33,6 +33,9 @@ export const useUpdateTaskTitleMutation = () => {
             onSuccess: (data: any) => {
                 queryClient.invalidateQueries({
                     queryKey: ["task", data._id]
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["task-activity", data._id]
                 })
             }
     })
@@ -47,6 +50,9 @@ export const useUpdateTaskStatusMutation = () => {
             onSuccess: (data: any) => {
                 queryClient.invalidateQueries({
                     queryKey: ["task", data._id]
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["task-activity", data._id]
                 })
             }
     })
@@ -61,6 +67,9 @@ export const useUpdateTaskDescriptionMutation = () => {
             onSuccess: (data: any) => {
                 queryClient.invalidateQueries({
                     queryKey: ["task", data._id]
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["task-activity", data._id]
                 })
             }
     })
@@ -75,6 +84,9 @@ export const useUpdateTaskAssigneesMutation = () => {
             onSuccess: (data: any) => {
                 queryClient.invalidateQueries({
                     queryKey: ["task", data._id]
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["task-activity", data._id]
                 })
             }
     })
@@ -89,6 +101,9 @@ export const useUpdateTaskPriorityMutation = () => {
             onSuccess: (data: any) => {
                 queryClient.invalidateQueries({
                     queryKey: ["task", data._id]
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["task-activity", data._id]
                 })
             }
     })
@@ -104,6 +119,9 @@ export const useAddSubTaskMutation = () => {
                 queryClient.invalidateQueries({
                     queryKey: ["task", data._id]
                 })
+                queryClient.invalidateQueries({
+                    queryKey: ["task-activity", data._id]
+                })
             }
     })
 }; 
@@ -113,12 +131,79 @@ export const useUpdateSubTaskMutation = () => {
     
     return useMutation({
         mutationFn: async (data: { subTaskId: string; taskId: string; completed: boolean }) => 
-            postData(`/tasks/${data.taskId}/update-subtask/${data.subTaskId}`, {completed: data.completed}),
+            updateData(`/tasks/${data.taskId}/update-subtask/${data.subTaskId}`, {completed: data.completed}),
             onSuccess: (data: any) => {
                 queryClient.invalidateQueries({
                     queryKey: ["task", data._id]
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["task-activity", data._id]
                 })
             }
     })
 }; 
 
+export const useAddCommentMutation = () => {
+    const queryClient = useQueryClient();
+    
+    return useMutation({
+        mutationFn: async (data: { text: string; taskId: string }) => 
+            postData(`/tasks/${data.taskId}/add-comment`, {text: data.text}),
+            onSuccess: (_, variables) => {
+                queryClient.invalidateQueries({
+                    queryKey: ["comments", variables.taskId]
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["task-activity", variables.taskId]
+                })
+            }
+    })
+}; 
+
+export const useGetCommentsByTaskIdQuery = (taskId: string) => {
+    return useQuery({
+        queryKey: ["comments", taskId],
+        queryFn: () => fetchData(`/tasks/${taskId}/comments`)
+    })
+}; 
+
+export const useWatchTaskMutation = () => {
+    const queryClient = useQueryClient();
+  
+    return useMutation({
+      mutationFn: (data: { taskId: string }) =>
+        postData(`/tasks/${data.taskId}/watch`, {}),
+      onSuccess: (data: any) => {
+        queryClient.invalidateQueries({
+          queryKey: ["task", data._id],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["task-activity", data._id],
+        });
+      },
+    });
+  };
+  
+  export const useArchivedTaskMutation = () => {
+    const queryClient = useQueryClient();
+  
+    return useMutation({
+      mutationFn: (data: { taskId: string }) =>
+        postData(`/tasks/${data.taskId}/archived`, {}),
+      onSuccess: (data: any) => {
+        queryClient.invalidateQueries({
+          queryKey: ["task", data._id],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["task-activity", data._id],
+        });
+      },
+    });
+  };
+  
+  export const useGetMyTasksQuery = () => {
+    return useQuery({
+      queryKey: ["my-tasks", "user"],
+      queryFn: () => fetchData("/tasks/my-tasks"),
+    });
+  };

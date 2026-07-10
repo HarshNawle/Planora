@@ -1,4 +1,6 @@
 import recordActivity from "../libs/index.js";
+import ActivityLog from "../models/activity.js";
+import Comment from "../models/comment.js";
 import Project from "../models/project.js";
 import Task from "../models/task.js";
 import Workspace from "../models/workspace.js";
@@ -65,8 +67,8 @@ export const getTaskById = async (req, res) => {
         const { taskId } = req.params;
 
         const task = await Task.findById(taskId)
-            .populate("assignees", "name profilePicture")
-            .populate("watchers", "name profilePicture");
+            .populate("assignees", "fullName profilePicture")
+            .populate("watchers", "fullName profilePicture");
 
         if (!task) {
             return res.status(404).json({
@@ -76,7 +78,7 @@ export const getTaskById = async (req, res) => {
 
         const project = await Project.findById(task.project).populate(
             "members.user",
-            "name profilePicture"
+            "fullName profilePicture"
         );
 
         if (!project) {
@@ -350,7 +352,7 @@ export const updateTaskPriority = async (req, res) => {
 export const addSubTask = async (req, res) => {
     try {
         const { taskId } = req.params;
-        const { priority } = req.body;
+        const { title } = req.body;
 
         const task = await Task.findById(taskId);
 
@@ -392,7 +394,7 @@ export const addSubTask = async (req, res) => {
         });
 
         res.status(201).json(task);
-        
+
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -414,7 +416,7 @@ export const updateSubtask = async (req, res) => {
             });
         }
 
-        const subTask = task.subtasks.find((subTask) => subTask._id.toString() ===  subTaskId);
+        const subTask = task.subtasks.find((subTask) => subTask._id.toString() === subTaskId);
 
         if (!subTask) {
             return res.status(404).json({
@@ -422,10 +424,6 @@ export const updateSubtask = async (req, res) => {
             });
         }
 
-        const newSubTask = {
-            title,
-            completed: false,
-        }
 
         subTask.completed = completed;
         await task.save();
@@ -436,7 +434,7 @@ export const updateSubtask = async (req, res) => {
         });
 
         res.status(201).json(task);
-        
+
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -444,3 +442,238 @@ export const updateSubtask = async (req, res) => {
         });
     }
 };
+
+export const getActivityByResourceId = async (req, res) => {
+    try {
+        const { resourceId } = req.params;
+
+        const activity = await ActivityLog.find({ resourceId }).populate("user", "fullName profilePicture")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json(activity);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+export const getCommentByTaskId = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+
+        const comments = await Comment.find({ task: taskId })
+            .populate("author", "fullName profilePicture")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json(comments);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+export const addComment = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const { text } = req.body;
+
+        const task = await Task.findById(taskId);
+
+        if (!task) {
+            return res.status(404).json({
+                message: "Task not found",
+            });
+        }
+
+        const project = await Project.findById(task.project).populate(
+            "members.user",
+            "fullName profilePicture"
+        );
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found",
+            });
+        };
+
+        const workspace = await Workspace.findById(project.workspace);
+
+        if (!workspace) {
+            return res.status(404).json({
+                message: "Workspace not found",
+            });
+        }
+
+        const isMember = workspace.members.some(
+            (member) => member.user.toString() === req.user._id.toString()
+        );
+
+        if (!isMember) {
+            return res.status(403).json({
+                message: "You are not a member of this project"
+            });
+        }
+
+        const newComment = await Comment.create({
+            text,
+            task: taskId,
+            author: req.user._id,
+        });
+
+        task.comments.push(newComment._id);
+        await task.save();
+
+        //record  activity
+        await recordActivity(req.user._id, "added_comment", "Task", taskId, {
+            description: `added comment ${text.substring(0, 50) + (text.length > 50 ? "..." : "")}`
+        });
+
+        // Populate author for response
+        const populatedComment = await Comment.findById(newComment._id)
+            .populate("author", "fullName profilePicture");
+
+        return res.status(201).json({ newComment: populatedComment });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+export const watchTask = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+
+        const task = await Task.findById(taskId);
+
+        if (!task) {
+            return res.status(404).json({
+                message: "Task not found",
+            });
+        }
+
+        const project = await Project.findById(task.project).populate(
+            "members.user",
+            "fullName profilePicture"
+        );
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found",
+            });
+        };
+
+        const workspace = await Workspace.findById(project.workspace);
+
+        if (!workspace) {
+            return res.status(404).json({
+                message: "Workspace not found",
+            });
+        }
+
+        const isMember = workspace.members.some(
+            (member) => member.user.toString() === req.user._id.toString()
+        );
+
+        if (!isMember) {
+            return res.status(403).json({
+                message: "You are not a member of this project"
+            });
+        }
+
+        const isWatching = task.watchers.includes(req.user._id);
+
+        if (!isWatching) {
+            task.watchers.push(req.user._id);
+        } else {
+            task.watchers = task.watchers.filter(
+                (watcher) => watcher.toString() !== req.user._id.toString()
+            );
+        }
+
+        await task.save();
+
+        //record  activity
+        await recordActivity(req.user._id, "updated_task", "Task", taskId, {
+            description: `${isWatching ? "stopped watching" : "started watching"
+                } task ${task.title}`
+        });
+
+        return res.status(200).json(task);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
+
+export const archivedTask = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+
+        const task = await Task.findById(taskId);
+
+        if (!task) {
+            return res.status(404).json({
+                message: "Task not found",
+            });
+        }
+
+        const project = await Project.findById(task.project).populate(
+            "members.user",
+            "fullName profilePicture"
+        );
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found",
+            });
+        };
+
+        const workspace = await Workspace.findById(project.workspace);
+
+        if (!workspace) {
+            return res.status(404).json({
+                message: "Workspace not found",
+            });
+        }
+
+        const isMember = workspace.members.some(
+            (member) => member.user.toString() === req.user._id.toString()
+        );
+
+        if (!isMember) {
+            return res.status(403).json({
+                message: "You are not a member of this project"
+            });
+        }
+
+        const isArchived = task.isArchived;
+
+        task.isArchived = !isArchived;
+        await task.save();
+
+        //record  activity
+        await recordActivity(req.user._id, "updated_task", "Task", taskId, {
+            description: `${isArchived ? "Unarchived" : "Archived"
+                } task ${task.title}`
+        });
+
+        return res.status(200).json(task);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}

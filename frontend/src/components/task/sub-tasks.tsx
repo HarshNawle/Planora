@@ -16,7 +16,7 @@ const SubTasksDetails = ({
 }) => {
     const [newSubTask, setNewSubTask] = useState("");
     const { mutate: addSubTask, isPending } = useAddSubTaskMutation();
-    const { mutat: updateSubTask, isPending: isUpdating } = useUpdateSubTaskMutation();
+    const { mutate: updateSubTask, isPending: isUpdating } = useUpdateSubTaskMutation();
 
     const handleToggleTask = ( subTaskId: string, checked: boolean ) => {
         updateSubTask(
@@ -66,7 +66,7 @@ const SubTasksDetails = ({
                                     disabled={isUpdating}
                                 />
 
-                                <label className={cn("text-sm ", subtask?.completed ? "line-through text-muted-foreground" : "")}>
+                                <label className={cn("text-sm ", subtask.completed ? "line-through text-muted-foreground" : "")}>
                                     {subtask.title}
                                 </label>
                             </div>
