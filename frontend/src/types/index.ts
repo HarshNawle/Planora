@@ -151,5 +151,39 @@ export interface Comment {
         fileUrl: string;
         fileType?: string;
         fileSize?: number
-    }
-}
+    }[];
+};
+
+export interface StatsCardProps {
+    totalProjects: number;
+    totalTasks: number;
+    totalProjectInProgress: number;
+    totalTaskCompleted: number;
+    totalTaskToDo: number;
+    totalTaskInProgress: number;
+};
+
+export interface TaskTrendsData {
+    name: string;
+    todo: number;
+    inProgress: number;
+    completed: number;
+};
+
+export interface ProjectStatusData {
+    name: string;
+    value: number; 
+    color: string
+};
+
+export interface TaskPriorityData {
+    name: string;
+    value: number; 
+    color: string
+};
+
+export interface WorkspaceProductivityData {
+    name: string;
+    completed: number; 
+    total: number;
+};

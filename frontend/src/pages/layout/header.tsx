@@ -6,7 +6,7 @@ import { useGetWorkspacesQuery } from '@/hooks/use-workspace';
 import { useAuth } from '@/provider/auth-context';
 import type { Workspace } from '@/types'
 import { Bell, CircleUserRound, LogOut, PlusCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
     onWorkspaceSelected: (Workspace: Workspace) => void;
@@ -19,10 +19,23 @@ const Header = ({
     selectedWorkspace,
     onCreateWorkspace
 }: HeaderProps) => {
-
+    const navigate = useNavigate();
     const { user, logout } = useAuth();
     const { data } = useGetWorkspacesQuery();
     const workspaces = (data ?? []) as Workspace[];
+    const isOnWorkspacePage = useLocation().pathname.includes("/workspace");
+
+    const handleOnClick = ( workspace: Workspace ) => {
+        onWorkspaceSelected(workspace);
+        const location = window.location;
+
+        if(isOnWorkspacePage){
+            navigate(`/workspaces/${workspace._id}`);
+        } else {
+            const basePath = location.pathname;
+            navigate(`${basePath}?workspaceId=${workspace._id}`);
+        }
+    };
 
     return (
         <div className='bg-background top-0 z-40 borber-b'>
@@ -53,7 +66,7 @@ const Header = ({
                         <DropdownMenuGroup>
                             {
                                 workspaces.map((ws) => (
-                                    <DropdownMenuItem key={ws._id} onClick={() => onWorkspaceSelected(ws)} >
+                                    <DropdownMenuItem key={ws._id} onClick={() => handleOnClick(ws)} >
                                         {ws.color && (
                                             <WorkspaceAvatar color={ws.color} name={ws.name} />
                                         )}
