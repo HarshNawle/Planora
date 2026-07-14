@@ -1,3 +1,4 @@
+import StatisticsCharts from '@/components/dashboard/statistics-charts';
 import StatsCard from '@/components/dashboard/stats-card';
 import { useGetWorkspaceStatsQuery } from '@/hooks/use-workspace';
 import type { Project, ProjectStatusData, StatsCardProps, Task, TaskPriorityData, TaskTrendsData, WorkspaceProductivityData } from '@/types';
@@ -11,11 +12,11 @@ const DashBoard = () => {
   const workspaceId = searchParams.get("workspaceId");
 
   const { data, isPending, isError, error } = useGetWorkspaceStatsQuery(workspaceId!) as {
-    data : {
+    data: {
       stats: StatsCardProps,
       taskTrendsData: TaskTrendsData,
       projectStatusData: ProjectStatusData,
-      tasksPriorityData: TaskPriorityData,
+      taskPriorityData: TaskPriorityData,
       workspaceProductivityData: WorkspaceProductivityData,
       upcomingTasks: Task[],
       recentProjects: Project[];
@@ -36,14 +37,14 @@ const DashBoard = () => {
   if (isError) {
     const errorMessage = error instanceof Error ? error.message : 'Failed to load dashboard';
     const isForbidden = errorMessage.includes('403') || errorMessage.includes('Forbidden');
-    
+
     if (isForbidden) {
       return (
         <div className='flex flex-col items-center justify-center h-64 text-center'>
           <AlertTriangle className='text-red-500 size-12 mb-4' />
           <h2 className='text-xl font-bold mb-2'>Access Denied</h2>
           <p className='text-gray-600 mb-4'>You don't have access to this workspace.</p>
-          <button 
+          <button
             onClick={() => navigate('/workspaces')}
             className='px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90'
           >
@@ -52,7 +53,7 @@ const DashBoard = () => {
         </div>
       )
     }
-    
+
     return (
       <div className='flex flex-col items-center justify-center h-64 text-center'>
         <AlertTriangle className='text-red-500 size-12 mb-4' />
@@ -73,6 +74,13 @@ const DashBoard = () => {
       </div>
 
       <StatsCard data={data.stats} />
+      <StatisticsCharts
+        stats={data.stats} 
+        taskTrendsData={data.taskTrendsData}  
+        projectStatusData={data.projectStatusData}  
+        taskPriorityData={data.taskPriorityData}  
+        workspaceProductivityData={data.workspaceProductivityData}  
+      />
     </div>
   )
 }
