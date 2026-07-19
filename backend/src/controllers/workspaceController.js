@@ -179,13 +179,14 @@ export const getWorkspaceStats = async (req, res) => {
 
     // get upcoming task in next 7 days
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+
     const upcomingTasks = tasks.filter((task) => {
+      if (!task.dueDate) return false;
       const taskDate = new Date(task.dueDate);
-      const today = new Date();
-      return (
-        taskDate > today &&
-        taskDate <= new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
-      );
+      return taskDate >= today && taskDate <= nextWeek;
     });
 
     const taskTrendsData = [

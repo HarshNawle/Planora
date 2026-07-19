@@ -458,7 +458,7 @@ export const getActivityByResourceId = async (req, res) => {
             message: "Internal server error"
         });
     }
-}
+};
 
 export const getCommentByTaskId = async (req, res) => {
     try {
@@ -475,7 +475,7 @@ export const getCommentByTaskId = async (req, res) => {
             message: "Internal server error"
         });
     }
-}
+};
 
 export const addComment = async (req, res) => {
     try {
@@ -545,7 +545,7 @@ export const addComment = async (req, res) => {
             message: "Internal server error"
         });
     }
-}
+};
 
 export const watchTask = async (req, res) => {
     try {
@@ -614,7 +614,7 @@ export const watchTask = async (req, res) => {
             message: "Internal server error"
         });
     }
-}
+};
 
 export const archivedTask = async (req, res) => {
     try {
@@ -676,4 +676,19 @@ export const archivedTask = async (req, res) => {
             message: "Internal server error"
         });
     }
-}
+};
+export const getMyTasks = async (req, res) => {
+    try {
+        const tasks = await Task.find({ assignees: { $in: [req.user._id] } })
+        .populate("project", "title workspace")
+        .sort({ createdAt: -1 });
+
+        res.status(200).json(tasks);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+};
