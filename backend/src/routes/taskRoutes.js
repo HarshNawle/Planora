@@ -49,7 +49,7 @@ taskRoutes.post(
 );
 
 taskRoutes.post(
-    "/:taskId/achieved",
+    "/:taskId/archived",
     authMiddleware,
     validateRequest({
         params: z.object({ taskId: z.string() }),
