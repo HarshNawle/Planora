@@ -8,8 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useGetMyTasksQuery } from '@/hooks/use-task';
 import type { Task } from '@/types';
 import { format } from 'date-fns';
-import { ArrowUpRight, CheckCircle, Circle, Clock, Filter, Loader, SortAsc } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
+import { ArrowUpRight, CheckCircle, Clock, Filter, Loader } from 'lucide-react';
+import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 
 const MyTasks = () => {
@@ -38,7 +38,7 @@ const MyTasks = () => {
     useEffect(() => {
         const urlFilter = searchParams.get("filter") || "all";
         const urlSort = searchParams.get("sort") || "desc";
-        const urlSearch = searchParams.get("serach") || "";
+        const urlSearch = searchParams.get("search") || "";
 
         if (urlFilter !== filter) setFilter(urlFilter);
         if (urlSort !== sortDirection) setSortDirection(urlSort === "asc" ? "asc" : "desc");
@@ -54,11 +54,11 @@ const MyTasks = () => {
     const filteredTasks = myTasks?.length > 0 ?
         myTasks.filter((task) => {
             if (filter === "all") return true;
-            else if (filter === "todo") return task.status === "To Do";
-            else if (filter === "inprogress") return task.status === "In Progress";
-            else if (filter === "done") return task.status === "Done";
-            else if (filter === "archived") return task.isArchived === true;
-            else if (filter === "high") return task.priority === "High";
+            if (filter === "todo") return task.status === "To Do";
+            if (filter === "inprogress") return task.status === "In Progress";
+            if (filter === "done") return task.status === "Done";
+            if (filter === "archived") return task.isArchived === true;
+            if (filter === "high") return task.priority === "High";
 
             return true;
 
@@ -77,7 +77,12 @@ const MyTasks = () => {
         }
 
         return 0;
-    })
+    });
+
+    const todoTasks = sortedTasks.filter((task) => task.status === "To Do");
+    const inProgressTasks = sortedTasks.filter((task) => task.status === "In Progress");
+    const doneTasks = sortedTasks.filter((task) => task.status === "Done");
+
 
     if (isLoading)
         return (
@@ -136,6 +141,7 @@ const MyTasks = () => {
                     <TabsTrigger value='board'>Board View</TabsTrigger>
                 </TabsList>
 
+                {/* LIST VIEW */}
                 <TabsContent value='list'>
                     <Card>
                         <CardHeader>
@@ -224,11 +230,158 @@ const MyTasks = () => {
                                         </div>
                                     ))
                                 }
+
+                                {
+                                    sortedTasks.length === 0 && (
+                                        <div className='p-4 text-center text-sm text-muted-foreground'>
+                                            No tasks found
+                                        </div>
+                                    )
+                                }
                             </div>
                         </CardContent>
                     </Card>
                 </TabsContent>
-                <TabsContent value='board'></TabsContent>
+
+                {/* BOARD VIEW */}
+                <TabsContent value='board'>
+                    <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className='flex items-center justify-between'>
+                                    To Do
+                                    <Badge variant={'outline'}>
+                                        {todoTasks?.length}
+                                    </Badge>
+                                </CardTitle>
+                            </CardHeader>
+
+                            <CardContent className='p-3 space-y-3 max-h-150 overflow-y-auto'>
+                                {
+                                    todoTasks.map((task) => (
+                                        <Card key={task._id} className='hover:shadow-md transition-shadow p-2'>
+                                            <Link to={`/workspace/${task.project.workspace}/projects/${task.project._id}/tasks/${task._id}`} className='block'>
+                                                <h3 className='font-medium'>{task.title}</h3>
+                                                <p className='text-sm text-muted-foreground line-clamp-3'>{task.description || "No description"}</p>
+                                            </Link>
+
+                                            <div className='flex items-center mt-2 gap-2'>
+                                                <Badge variant={task.priority ? "destructive" : "secondary"}>
+                                                    {task.priority}
+                                                </Badge>
+                                                {
+                                                    task.dueDate && (
+                                                        <span className='text-sm text-muted-foreground'>
+                                                            {format(task.dueDate, "PPPP")}
+                                                        </span>
+                                                    )
+                                                }
+                                            </div>
+                                        </Card>
+                                    ))
+                                }
+
+                                {
+                                    todoTasks.length === 0 && (
+                                        <div className='p-4 text-center text-sm text-muted-foreground'>
+                                            No tasks found
+                                        </div>
+                                    )
+                                }
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className='flex items-center justify-between'>
+                                    In Progress
+                                    <Badge variant={'outline'}>
+                                        {inProgressTasks?.length}
+                                    </Badge>
+                                </CardTitle>
+                            </CardHeader>
+
+                            <CardContent className='p-3 space-y-3 max-h-150 overflow-y-auto'>
+                                {
+                                    inProgressTasks.map((task) => (
+                                        <Card key={task._id} className='hover:shadow-md transition-shadow p-2'>
+                                            <Link to={`/workspace/${task.project.workspace}/projects/${task.project._id}/tasks/${task._id}`} className='block'>
+                                                <h3 className='font-medium'>{task.title}</h3>
+                                                <p className='text-sm text-muted-foreground line-clamp-3'>{task.description || "No description"}</p>
+                                            </Link>
+
+                                            <div className='flex items-center mt-2 gap-2'>
+                                                <Badge variant={task.priority ? "destructive" : "secondary"}>
+                                                    {task.priority}
+                                                </Badge>
+                                                {
+                                                    task.dueDate && (
+                                                        <span className='text-sm text-muted-foreground'>
+                                                            {format(task.dueDate, "PPPP")}
+                                                        </span>
+                                                    )
+                                                }
+                                            </div>
+                                        </Card>
+                                    ))
+                                }
+
+                                {
+                                    inProgressTasks.length === 0 && (
+                                        <div className='p-4 text-center text-sm text-muted-foreground'>
+                                            No tasks found
+                                        </div>
+                                    )
+                                }
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className='flex items-center justify-between'>
+                                    Done
+                                    <Badge variant={'outline'}>
+                                        {doneTasks?.length}
+                                    </Badge>
+                                </CardTitle>
+                            </CardHeader>
+
+                            <CardContent className='p-3 space-y-3 max-h-150 overflow-y-auto'>
+                                {
+                                    doneTasks.map((task) => (
+                                        <Card key={task._id} className='hover:shadow-md transition-shadow p-2'>
+                                            <Link to={`/workspace/${task.project.workspace}/projects/${task.project._id}/tasks/${task._id}`} className='block'>
+                                                <h3 className='font-medium'>{task.title}</h3>
+                                                <p className='text-sm text-muted-foreground line-clamp-3'>{task.description || "No description"}</p>
+                                            </Link>
+
+                                            <div className='flex items-center mt-2 gap-2'>
+                                                <Badge variant={task.priority ? "destructive" : "secondary"}>
+                                                    {task.priority}
+                                                </Badge>
+                                                {
+                                                    task.dueDate && (
+                                                        <span className='text-sm text-muted-foreground'>
+                                                            {format(task.dueDate, "PPPP")}
+                                                        </span>
+                                                    )
+                                                }
+                                            </div>
+                                        </Card>
+                                    ))
+                                }
+
+                                {
+                                    doneTasks.length === 0 && (
+                                        <div className='p-4 text-center text-sm text-muted-foreground'>
+                                            No tasks found
+                                        </div>
+                                    )
+                                }
+                            </CardContent>
+                        </Card>
+                    </div>
+                </TabsContent>
             </Tabs>
         </div>
     )
