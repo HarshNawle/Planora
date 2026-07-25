@@ -13,6 +13,7 @@ import WorkspaceDetails from "./pages/dashboard/workspaces/workspace-details";
 import ProjectDetails from "./pages/dashboard/project/project-details";
 import TaskDetails from "./pages/dashboard/task/task-details";
 import MyTasks from "./pages/dashboard/my-tasks";
+import Members from "./pages/dashboard/members";
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
         <Route path="/workspaces/:workspaceId/projects/:projectId" element={<ProjectDetails/>} />
         <Route path="/workspaces/:workspaceId/projects/:projectId/tasks/:taskId" element={<TaskDetails/>} />
         <Route path="/my-tasks" element={<MyTasks/>} />
+        <Route path="/members" element={<Members/>} />
       </Route>
     </Routes>
   )
