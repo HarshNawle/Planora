@@ -60,7 +60,12 @@ const taskSchema = z.object({
     priority: z.enum(["Low", "Medium", "High"]),
     dueDate: z.string().min(1, "Due date is required"),
     assignees: z.array(z.string()).min(1, "Atleast one assignee is required")
-})
+});
+
+const inviteMemberSchema = z.object({
+    email: z.string().email("Invlaid email address"),
+    role: z.enum(["manager", "contributor", "viewer"]),
+});
 
 
 export { 
@@ -71,5 +76,6 @@ export {
     resetPasswordSchema,
     workSpaceSchema,
     projectSchema,
-    taskSchema
+    taskSchema,
+    inviteMemberSchem
 };

@@ -108,7 +108,7 @@ const Members = () => {
                                                 </div>
                                             </div>
 
-                                            <div className='flex items-center space-x-1 ml-11 md:ml-0'>
+                                            <div className='flex items-center space-x-1 ml-11 md:ml-0 gap-3'>
                                                 <Badge
                                                     variant={["admin", "owner"].includes(member.role)
                                                         ? "destructive"
@@ -129,7 +129,32 @@ const Members = () => {
                 {/* BOARD VIEW */}
                 <TabsContent value='board'>
                     <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+                        {
+                            filteredMembers.map((member) => (
+                                <Card key={member.user._id} className=''>
+                                    <CardContent className='p-6 flex flex-col items-center text-center'>
+                                        <Avatar className='bg-gray-500 size-20 mb-4'>
+                                            <AvatarImage src={member.user.profilePicture}/>
+                                            <AvatarFallback className='uppercase'>
+                                                {member.user.fullName.substring(0,2)}
+                                            </AvatarFallback>
+                                        </Avatar>
 
+                                        <h3 className='text-lg font-medium mb-2'>
+                                            {member.user.fullName}
+                                        </h3> 
+
+                                        <p className='text-sm text-gray-500 mb-4'>
+                                            {member.user.email}
+                                        </p>
+
+                                        <Badge variant={["admin", "owner"].includes(member.role) ? "destructive" : "secondary"}>
+                                            {member.role}
+                                        </Badge>
+                                    </CardContent>
+                                </Card>
+                            ))
+                        }
                     </div>
                 </TabsContent>
             </Tabs>

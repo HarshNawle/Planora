@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import Workspace from "../models/workspace.js";
 import Project from "../models/project.js";
+import User from "../models/user.js";
+import WorkspaceInvite from "../models/workspace-invite.js";
 
 export const createWorkspace = async (req, res, next) => {
   try {
@@ -328,3 +330,49 @@ export const getWorkspaceStats = async (req, res) => {
     });
   }
 };
+
+export const inviteUserToWorkspace = async (req,res) => {
+  try {
+    const { workspaceId } = req.params;
+    const { email, role } = req.body;
+
+    const workspace = await Workspace.findById(workspaceId);
+
+    if(!workspace){
+      return res.status(404).json({
+        message: "Workspace not found"
+      })
+    }
+
+    const userMemberInfo = workspace.members.find((member) => member.user.toString() === req.user._id.toString());
+
+    if(userMemberInfo || !["admin", "owner"].includes(userMemberInfo.role)) {
+      return res.status(403).json({
+        message: "You are not authorized to invite members to this workspace",
+      })
+    };
+
+    const existingUser =  await User.findOne({email});
+
+    if(!existingUser) {
+      return res.status(500).json({
+        message: "Intrnal server error"
+      })
+    }
+
+    const isMember = workspace.members.some((member) => member.user.toString() === existingUser._id.toString());
+    if(!isMember) {
+      return res.status(400).json({
+        message: "User already a member of this workspace"
+      })
+    }
+
+    const isInvited = await WorkspaceInvite.findOne({
+      user: existingUser._id,
+      workspaceId: workspaceId,
+    });
+    
+  } catch (error) {
+    
+  }
+}

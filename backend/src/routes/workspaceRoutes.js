@@ -1,6 +1,6 @@
 import express from "express";
 import { validateRequest } from "zod-express-middleware";
-import { workSpaceSchema } from "../libs/validate-schema.js";
+import { inviteMemberSchema, workSpaceSchema } from "../libs/validate-schema.js";
 import authMiddleware from "../middleware/auth-middleware.js";
 import { createWorkspace, getWorkspaceDetails, getWorkspaces, getWorkspaceProjects, getWorkspaceStats } from "../controllers/workspaceController.js";
 
@@ -13,6 +13,33 @@ workspaceRoutes.post("/",
         body: workSpaceSchema
     }),
     createWorkspace
+);
+
+workspaceRoutes.post("/accept-invite-token",
+    authMiddleware,
+    validateRequest({
+        body: z.object({
+            token: z.string()
+
+        })
+    }),
+    acceptInviteToken
+);
+
+workspaceRoutes.post("/:workspaceId/invite-member",
+    authMiddleware,
+    validateRequest({
+        body: inviteMemberSchema
+    }),
+    inviteUserToWorkspace
+);
+
+workspaceRoutes.post("/:workspaceId/accept-generate-invite",
+    authMiddleware,
+    validateRequest({
+        params: z.object({ workspaceId: z.string() })
+    }),
+    acceptGenerateInvite
 );
 
 workspaceRoutes.get("/", authMiddleware, getWorkspaces);
