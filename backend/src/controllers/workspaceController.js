@@ -433,10 +433,10 @@ export const acceptInviteToken = async (req, res) => {
 
     const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-    const { user, workspace, role } = decode;
+    const { user, workspaceId, role } = decode;
     const workspace = await Workspace.findById(workspaceId);
 
-    if(!workspace) {
+    if (!workspace) {
       return res.status(404).json({
         message: "Workspace not found",
       })
@@ -459,7 +459,7 @@ export const acceptInviteToken = async (req, res) => {
       })
     };
 
-    if( inviteInfo.expireAt() < new Date() ){
+    if (inviteInfo.expireAt() < new Date()) {
       return res.status(400).json({
         message: "Invitation has expired",
       })
@@ -494,57 +494,43 @@ export const acceptInviteToken = async (req, res) => {
 
 export const acceptGenerateInvite = async (req, res) => {
   try {
-    const { token } = req.body;
-
-    const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-    const { user, workspace, role } = decode;
+    const { workspaceId } = decode;
     const workspace = await Workspace.findById(workspaceId);
 
-    if(!workspace) {
+    if (!workspace) {
       return res.status(404).json({
         message: "Workspace not found",
       })
     };
 
-    const isMember = workspace.members.some((member) => member.user.toString() === user.toString());
+    const isMember = workspace.members.some(
+      (member) => member.user.toString() === req.user._id.toString()
+    );
+
     if (!isMember) {
       return res.status(400).json({
-        message: "User already a member of this workspace"
-      })
-    };
-
-    const inviteInfo = await WorkspaceInvite.findOne({
-      user: user,
-      workspaceId: workspaceId
-    });
-    if (!inviteInfo) {
-      return res.status(404).json({
-        message: "Invitation not found"
-      })
-    };
-
-    if( inviteInfo.expireAt() < new Date() ){
-      return res.status(400).json({
-        message: "Invitation has expired",
+        message: "You are already a member of this workspace"
       })
     };
 
     workspace.members.push({
-      user: user,
-      role: role || "member",
+      user: req.user._id,
+      role: "member",
       joinedAt: new Date()
     });
 
 
     await workspace.save();
 
-    await Promise.all([
-      WorkspaceInvite.deleteOne({ _id: inviteInfo._id }),
-      recordActivity(user, "joined_workspace", "Workspace", workspaceId, {
+    await recordActivity(
+      req.user._id,
+      "joined_workspace",
+      "Workspace",
+      workspaceId,
+      {
         description: `Joined ${workspace.name} workspace`,
-      })
-    ]);
+      }
+    );
 
     res.status(200).json({
       message: "Invited accepted successfully",

@@ -6,9 +6,10 @@ import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import ProjectList from './project-list';
 import CreateProjectDialog from '@/pages/project/create-project';
+import InvitedMemberDialog from '@/components/workspace/invite-member-dialog';
 
 const WorkspaceDetails = () => {
-  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const { workspaceId } = useParams<{ workspaceId: any }>();
   const [isCreateProject, setIsCreateProject] = useState(false);
   const [isInviteMember, setIsInviteMember] = useState(false);
 
@@ -56,6 +57,12 @@ const WorkspaceDetails = () => {
       onOpenChange={setIsCreateProject}
       workspaceId={workspaceId}
       workspaceMembers={data.workspace.members as any}
+    />
+
+    <InvitedMemberDialog
+      isOpen={isInviteMember}
+      onOpenChange={setIsInviteMember}
+      workspaceId={workspaceId}
     />
 
     </div>

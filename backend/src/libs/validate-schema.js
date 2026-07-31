@@ -77,5 +77,5 @@ export {
     workSpaceSchema,
     projectSchema,
     taskSchema,
-    inviteMemberSchem
+    inviteMemberSchema
 };

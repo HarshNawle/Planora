@@ -41,7 +41,7 @@ const WorkspaceHeader = ({
           </div>
 
           <div className='text-xl flex items-center gap-3 justify-between md:justify-start mb-4  md:mb-0 ' >
-            <Button variant={'outline'} onClick={onInviteMember}>
+            <Button variant={'outline'} onClick={onInviteMember} className='cursor-pointer'>
               <UserPlus className='size-4 mr-2' />
               Invite
             </Button>
