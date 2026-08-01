@@ -40,4 +40,14 @@ export const useGetWorkspaceDetailsQuery = (workspaceId: string) => {
         queryKey: ["workspace", workspaceId, "details"],
         queryFn: async () => fetchData(`/workspaces/${workspaceId}`),
     });
+};
+
+export const useInviteMemberMutation = () => {
+    return useMutation({
+        mutationFn: async (data: {
+            email: string;
+            role: string;
+            workspaceId: string;
+        }) => postData(`/workspaces/${data.workspaceId}/invite-member`, data),
+    })
 }
