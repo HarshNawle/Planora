@@ -56,9 +56,8 @@ export const getWorkspaceDetails = async (req, res) => {
   try {
     const { workspaceId } = req.params;
 
-    const workspace = await Workspace.findOne({
+    const workspace = await Workspace.findById({
       _id: workspaceId,
-      "members.user": req.user._id,
     })
       .populate(
         "members.user",

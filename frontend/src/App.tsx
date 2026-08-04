@@ -14,6 +14,7 @@ import ProjectDetails from "./pages/dashboard/project/project-details";
 import TaskDetails from "./pages/dashboard/task/task-details";
 import MyTasks from "./pages/dashboard/my-tasks";
 import Members from "./pages/dashboard/members";
+import WorkspaceInvite from "./pages/dashboard/workspaces/workspace-invite";
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
         <Route path="/workspaces/:workspaceId/projects/:projectId/tasks/:taskId" element={<TaskDetails/>} />
         <Route path="/my-tasks" element={<MyTasks/>} />
         <Route path="/members" element={<Members/>} />
+        <Route path="/workspace-invite/:workspaceId" element={<WorkspaceInvite/>} />
       </Route>
     </Routes>
   )

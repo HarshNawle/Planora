@@ -25,6 +25,10 @@ const resetPasswordSchema = z.object({
     confirmPassword: z.string().min(1, "Confirm Password is required")
 });
 
+const tokenSchema = z.object({
+    token: z.string().min(1, "Token is required")
+})
+
 const workSpaceSchema = z.object({
     name: z.string().min(1, "Name is required"),
     description: z.string().optional(),
@@ -77,5 +81,6 @@ export {
     workSpaceSchema,
     projectSchema,
     taskSchema,
-    inviteMemberSchema
+    inviteMemberSchema,
+    tokenSchema
 };

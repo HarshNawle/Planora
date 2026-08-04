@@ -1,7 +1,7 @@
 import { inviteMemberSchema } from '@/lib/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import type z from 'zod';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
@@ -60,7 +60,7 @@ const InvitedMemberDialog = ({
             onError: (error: any) => {
                 toast.error(error.response.data.message);
                 console.log(error);
-                
+
             }
         })
     }
@@ -147,14 +147,14 @@ const InvitedMemberDialog = ({
                                                 )}
                                             />
                                         </div>
+                                        <Button size={'lg'} className='mt-6 w-full' disabled={isPending}>
+                                            <Mail className='mr-2 size-4' />
+                                            Send
+                                        </Button>
                                     </form>
                                 </Form>
                             </div>
 
-                            <Button size={'lg'} className='mt-6 w-full' disabled={isPending}>
-                                <Mail className='mr-2 size-4' />
-                                Send
-                            </Button>
                         </div>
                     </TabsContent>
 
