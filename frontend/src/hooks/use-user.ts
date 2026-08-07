@@ -1,5 +1,6 @@
-import { fetchData } from "@/lib/fetch-utils";
-import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { fetchData, updateData } from "@/lib/fetch-utils";
+import type { ChangePasswordFormData, ProfileFormData } from "@/pages/dashboard/user/profile";
+import { useQuery, type QueryKey, useMutation } from "@tanstack/react-query";
 
 const queryKey: QueryKey = ["user"];
 
@@ -8,6 +9,24 @@ export const useUserProfileQuery = () => {
         {
             queryKey,
             queryFn: () => fetchData("/users/profile"),
+        }
+    )
+};
+
+export const useChangePassword = () => {
+    return useMutation(
+        {
+           mutationFn: (data: ChangePasswordFormData) => 
+            updateData("/user/change-password", data)
+        }
+    )
+};
+
+export const useUploadUserProfile = () => {
+    return useMutation(
+        {
+           mutationFn: (data: ProfileFormData) => 
+            updateData("/user/profile", data)
         }
     )
 };

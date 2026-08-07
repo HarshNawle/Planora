@@ -72,5 +72,7 @@ export const changePassword = async (req, res) => {
         console.log("Error fetching user profile: ", error);
         res.status(500).json({ message: "Server error" })
     }
-}
+};
+
+
 

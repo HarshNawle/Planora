@@ -39,6 +39,10 @@ function App() {
         <Route path="/members" element={<Members/>} />
         <Route path="/workspace-invite/:workspaceId" element={<WorkspaceInvite/>} />
       </Route>
+
+      <Route element={<User/>}>
+
+      </Route>
     </Routes>
   )
 }
