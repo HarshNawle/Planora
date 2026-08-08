@@ -1,5 +1,4 @@
 import type { ProjectStatusData, StatsCardProps, TaskPriorityData, TaskTrendsData, WorkspaceProductivityData } from '@/types';
-import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { ChartBarBig, ChartLine, ChartPie } from 'lucide-react';
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '../ui/chart';
@@ -20,9 +19,14 @@ const StatisticsCharts = ({
     taskPriorityData,
     workspaceProductivityData
 }: StatisticsChartsProps) => {
+    const projectStatusTotal = projectStatusData.reduce((sum, entry) => sum + entry.value, 0);
+    const activeProjectStatusData = projectStatusData.filter((entry) => entry.value > 0);
+    const taskPriorityTotal = taskPriorityData.reduce((sum, entry) => sum + entry.value, 0);
+    const activeTaskPriorityData = taskPriorityData.filter((entry) => entry.value > 0);
+
     return (
-        <div className='grid gap-6 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 mb-8'>
-            <Card className='lg:col-span-2'>
+        <div className='grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-8 *:min-w-0'>
+            <Card className='lg:col-span-2 overflow-hidden'>
                 <CardHeader className='flex flex-row items-center justify-between pb-2'>
                     <div className='space-y-0.5'>
                         <CardTitle className='text-base font-medium'>Task Trends</CardTitle>
@@ -32,10 +36,9 @@ const StatisticsCharts = ({
                     <ChartLine className='size-5 text-muted-foreground' />
 
                 </CardHeader>
-                <CardContent className='w-full text-muted-foreground'>
-                    <div className='min-w-[350px]'>
-                        <ChartContainer
-                            className='h-[300px]'
+                <CardContent className='w-full overflow-hidden text-muted-foreground'>
+                    <ChartContainer
+                            className='aspect-video h-55 w-full'
                             config={{
                                 completed: { color: "#10b981" }, // green
                                 inProgress: { color: "#f59e0b" }, // blue
@@ -88,14 +91,16 @@ const StatisticsCharts = ({
 
                             </LineChart>
                         </ChartContainer>
-                    </div>
+                    <p className="border-t pt-2 text-xs text-muted-foreground mt-2">
+                        {stats.totalTaskCompleted} of {stats.totalTasks} completed
+                    </p>
                 </CardContent>
 
 
             </Card>
 
             {/* Project Status */}
-            <Card>
+            <Card className="overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div className="space-y-0.5">
                         <CardTitle className="text-base font-medium">
@@ -107,45 +112,71 @@ const StatisticsCharts = ({
                     <ChartPie className="size-5 text-muted-foreground" />
                 </CardHeader>
 
-                <CardContent className="w-full overflow-x-auto md:overflow-x-hidden">
-                    <div className="min-w-[350px]">
-                        <ChartContainer
-                            className="h-[300px]"
-                            config={{
-                                Completed: { color: "#10b981" },
-                                "In Progress": { color: "#3b82f6" },
-                                Planning: { color: "#f59e0b" },
-                            }}
-                        >
-                            <PieChart>
-                                <Pie
-                                    data={projectStatusData}
-                                    cx="50%"
-                                    cy="50%"
-                                    dataKey="value"
-                                    nameKey="name"
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    paddingAngle={2}
-                                    label={({ name, percent }) =>
-                                        `${name} (${(percent * 100).toFixed(0)}%)`
-                                    }
-                                    labelLine={false}
-                                >
-                                    {projectStatusData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} />
-                                    ))}
-                                </Pie>
-                                <ChartTooltip />
-                                <ChartLegend content={<ChartLegendContent />} />
-                            </PieChart>
-                        </ChartContainer>
+                <CardContent className="w-full overflow-hidden">
+                    <div className="flex flex-col items-center gap-4">
+                        {activeProjectStatusData.length > 0 ? (
+                            <ChartContainer
+                                className="mx-auto aspect-square h-[160px] w-[160px]"
+                                config={{
+                                    Completed: { label: "Completed", color: "#10b981" },
+                                    "In Progress": { label: "In Progress", color: "#3b82f6" },
+                                    Planning: { label: "Planning", color: "#f59e0b" },
+                                }}
+                            >
+                                <PieChart>
+                                    <Pie
+                                        data={activeProjectStatusData}
+                                        cx="50%"
+                                        cy="50%"
+                                        dataKey="value"
+                                        nameKey="name"
+                                        innerRadius={45}
+                                        outerRadius={65}
+                                        paddingAngle={2}
+                                        label={false}
+                                    >
+                                        {activeProjectStatusData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Pie>
+                                    <ChartTooltip />
+                                </PieChart>
+                            </ChartContainer>
+                        ) : (
+                            <div className="flex h-[160px] w-[160px] items-center justify-center text-sm text-muted-foreground">
+                                No project data
+                            </div>
+                        )}
+                        <div className="w-full flex flex-col gap-1.5">
+                            {projectStatusData.map((entry) => (
+                                <div key={entry.name} className="flex items-center justify-between text-xs">
+                                    <div className="flex items-center gap-1.5">
+                                        <div
+                                            className="h-2 w-2 shrink-0 rounded-[2px]"
+                                            style={{ backgroundColor: entry.color }}
+                                        />
+                                        <span className="text-muted-foreground">{entry.name}</span>
+                                    </div>
+                                    <span className="font-medium tabular-nums">
+                                        {entry.value}
+                                        {projectStatusTotal > 0 && (
+                                            <span className="font-normal text-muted-foreground">
+                                                {" "}({Math.round((entry.value / projectStatusTotal) * 100)}%)
+                                            </span>
+                                        )}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                        <p className="w-full border-t pt-2 text-xs text-muted-foreground">
+                            {stats.totalProjects} projects · {stats.totalProjectInProgress} in progress
+                        </p>
                     </div>
                 </CardContent>
             </Card>
 
             {/* task priority  */}
-            <Card>
+            <Card className="overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div className="space-y-0.5">
                         <CardTitle className="text-base font-medium">
@@ -155,45 +186,71 @@ const StatisticsCharts = ({
                     </div>
                 </CardHeader>
 
-                <CardContent className="w-full overflow-x-auto md:overflow-x-hidden">
-                    <div className="min-w-[350px]">
-                        <ChartContainer
-                            className="h-[300px]"
-                            config={{
-                                High: { color: "#ef4444" },
-                                Medium: { color: "#f59e0b" },
-                                Low: { color: "#6b7280" },
-                            }}
-                        >
-                            <PieChart>
-                                <Pie
-                                    data={taskPriorityData}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    paddingAngle={2}
-                                    dataKey="value"
-                                    nameKey="name"
-                                    label={({ name, percent }) =>
-                                        `${name} ${(percent * 100).toFixed(0)}%`
-                                    }
-                                    labelLine={false}
-                                >
-                                    {taskPriorityData?.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} />
-                                    ))}
-                                </Pie>
-                                <ChartTooltip />
-                                <ChartLegend content={<ChartLegendContent />} />
-                            </PieChart>
-                        </ChartContainer>
+                <CardContent className="w-full overflow-hidden">
+                    <div className="flex flex-col items-center gap-4">
+                        {activeTaskPriorityData.length > 0 ? (
+                            <ChartContainer
+                                className="mx-auto aspect-square h-[160px] w-[160px]"
+                                config={{
+                                    High: { label: "High", color: "#ef4444" },
+                                    Medium: { label: "Medium", color: "#f59e0b" },
+                                    Low: { label: "Low", color: "#6b7280" },
+                                }}
+                            >
+                                <PieChart>
+                                    <Pie
+                                        data={activeTaskPriorityData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={45}
+                                        outerRadius={65}
+                                        paddingAngle={2}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        label={false}
+                                    >
+                                        {activeTaskPriorityData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Pie>
+                                    <ChartTooltip />
+                                </PieChart>
+                            </ChartContainer>
+                        ) : (
+                            <div className="flex h-[160px] w-[160px] items-center justify-center text-sm text-muted-foreground">
+                                No task data
+                            </div>
+                        )}
+                        <div className="w-full flex flex-col gap-1.5">
+                            {taskPriorityData.map((entry) => (
+                                <div key={entry.name} className="flex items-center justify-between text-xs">
+                                    <div className="flex items-center gap-1.5">
+                                        <div
+                                            className="h-2 w-2 shrink-0 rounded-[2px]"
+                                            style={{ backgroundColor: entry.color }}
+                                        />
+                                        <span className="text-muted-foreground">{entry.name}</span>
+                                    </div>
+                                    <span className="font-medium tabular-nums">
+                                        {entry.value}
+                                        {taskPriorityTotal > 0 && (
+                                            <span className="font-normal text-muted-foreground">
+                                                {" "}({Math.round((entry.value / taskPriorityTotal) * 100)}%)
+                                            </span>
+                                        )}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                        <p className="w-full border-t pt-2 text-xs text-muted-foreground">
+                            {stats.totalTasks} tasks across all priorities
+                        </p>
                     </div>
                 </CardContent>
             </Card>
 
             {/* Workspace Productivity Chart */}
-            <Card className="lg:col-span-2">
+            <Card className="lg:col-span-2 overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div className="space-y-0.5">
                         <CardTitle className="text-base font-medium">
@@ -203,15 +260,14 @@ const StatisticsCharts = ({
                     </div>
                     <ChartBarBig className="h-5 w-5 text-muted-foreground" />
                 </CardHeader>
-                <CardContent className="w-full overflow-x-auto md:overflow-x-hidden">
-                    <div className="min-w-[350px]">
-                        <ChartContainer
-                            className="h-[300px]"
-                            config={{
-                                completed: { color: "#3b82f6" },
-                                total: { color: "red" },
-                            }}
-                        >
+                <CardContent className="w-full overflow-hidden">
+                    <ChartContainer
+                        className="aspect-video h-[220px] w-full"
+                        config={{
+                            completed: { color: "#3b82f6" },
+                            total: { color: "red" },
+                        }}
+                    >
                             <BarChart
                                 data={workspaceProductivityData}
                                 barGap={0}
@@ -247,7 +303,9 @@ const StatisticsCharts = ({
                                 <ChartLegend content={<ChartLegendContent />} />
                             </BarChart>
                         </ChartContainer>
-                    </div>
+                    <p className="border-t pt-2 text-xs text-muted-foreground mt-2">
+                        {stats.totalTaskCompleted} completed · {stats.totalTaskInProgress} in progress · {stats.totalTaskToDo} to do
+                    </p>
                 </CardContent>
             </Card>
         </div>

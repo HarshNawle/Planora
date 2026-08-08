@@ -38,7 +38,7 @@ const TaskTitle = ({
             {
                 isEditing ? (
                     <Input
-                        className='text-xl! font-semibold w-full min-w-3xl'
+                        className='text-xl! font-semibold w-full min-w-0'
                         value={newTitle}
                         onChange={(e) => setNewTitle(e.target.value)}
                         disabled={isPending}

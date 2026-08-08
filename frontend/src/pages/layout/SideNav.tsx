@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { getStoredWorkspaceId } from '@/lib/workspace-storage';
 import type { Workspace } from '@/types';
 import type { LucideIcon } from 'lucide-react'
 import React from 'react'
@@ -13,11 +14,12 @@ interface SidebarNavProps extends React.HtmlHTMLAttributes<HTMLElement> {
     }[],
     isCollapsed: boolean,
     currentWorkspace: Workspace | null,
+    onNavigate?: () => void;
     className?: string
 }
 
 const SideNav = (
-    { items, isCollapsed, currentWorkspace, className, ...props }: SidebarNavProps
+    { items, isCollapsed, currentWorkspace, onNavigate, className, ...props }: SidebarNavProps
 ) => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -30,9 +32,13 @@ const SideNav = (
                 const isActive = location.pathname === el.href;
 
                 const handleClick = () => {
-                    if (el.href === "/workspaces") { navigate(el.href); }
-                    else if (currentWorkspace && currentWorkspace._id) {
-                        navigate(`${el.href}?workspaceId=${currentWorkspace._id}`);
+                    onNavigate?.();
+                    const workspaceId = currentWorkspace?._id ?? getStoredWorkspaceId();
+
+                    if (el.href === "/workspaces") {
+                        navigate(workspaceId ? `/workspaces/${workspaceId}` : el.href);
+                    } else if (workspaceId) {
+                        navigate(`${el.href}?workspaceId=${workspaceId}`);
                     } else {
                         navigate(el.href);
                     }

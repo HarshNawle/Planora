@@ -25,9 +25,9 @@ const Workspaces = () => {
     return (
         <>
             <div className='space-y-8'>
-                <div className='flex items-center justify-between'>
+                <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
                     <h2 className='text-xl md:text-3xl font-bold'>Workspaces</h2>
-                    <Button onClick={() => setIsCreatingWorkspace(true)} className='bg-gray-700' >
+                    <Button onClick={() => setIsCreatingWorkspace(true)} className='bg-gray-700 w-full sm:w-fit'>
                         <PlusCircle className='size-4 mr-2' />
                         New Workspace
                     </Button>

@@ -39,7 +39,7 @@ const TaskDescription = ({
             {
                 isEditing ? (
                     <Textarea
-                        className='w-full min-w-3xl'
+                        className='w-full min-w-0'
                         value={newDescription}
                         onChange={(e) => setNewDescription(e.target.value)}
                         disabled={isPending}

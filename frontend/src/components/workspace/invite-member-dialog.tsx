@@ -162,12 +162,13 @@ const InvitedMemberDialog = ({
                         <div className='grid gap-4'>
                             <div className='grid gap-2'>
                                 <Label>Share this link to invite people</Label>
-                                <div className='flex items-center space-x-2'>
+                                <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2'>
                                     <Input
                                         readOnly
+                                        className='min-w-0 flex-1'
                                         value={`${window.location.origin}/workspace-invite/${workspaceId}`}
                                     />
-                                    <Button onClick={handleCopyInviteLink} disabled={isPending}>
+                                    <Button onClick={handleCopyInviteLink} disabled={isPending} className='shrink-0'>
                                         {
                                             linkCopied ? (
                                                 <>
@@ -176,7 +177,7 @@ const InvitedMemberDialog = ({
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Copy classNamemr-2 size-4 />
+                                                    <Copy className='mr-2 size-4' />
                                                     Copy
                                                 </>
                                             )

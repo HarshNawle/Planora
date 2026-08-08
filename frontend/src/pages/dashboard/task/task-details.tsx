@@ -91,10 +91,10 @@ const TaskDetails = () => {
 
   return (
     <div className='container mx-auto p-0 py-4 md:px-4'>
-      <div className='flex items-center justify-between flex-col md:flex-row md-6'>
-        <div className='flex md:items-center flex-col md:flex-row '>
+      <div className='flex items-center justify-between flex-col gap-3 md:flex-row mb-6'>
+        <div className='flex md:items-center flex-col md:flex-row gap-2 min-w-0'>
           <BackButton />
-          <h1 className='text-xl md:text-2xl font-bold' >{task.title}</h1>
+          <h1 className='text-xl md:text-2xl font-bold break-words' >{task.title}</h1>
           {
             task.isArchived && (
               <Badge className='ml-2' variant={'outline'}>
@@ -103,7 +103,7 @@ const TaskDetails = () => {
             )
           }
         </div>
-        <div className='flex space-x-2 mt-4 md:mt-0'>
+        <div className='flex flex-wrap gap-2 mt-4 md:mt-0'>
           <Button variant={'outline'}
             className='w-fit'
             size="sm"
@@ -136,8 +136,8 @@ const TaskDetails = () => {
       </div>
 
       <div className='flex flex-col lg:flex-row gap-6'>
-        <div className='w-[70%] lg:col-span-2'>
-          <div className='bg-card rounded-lg p-6 shadow-sm mb-6'>
+        <div className='w-full lg:w-[70%]'>
+          <div className='bg-card rounded-lg p-4 sm:p-6 shadow-sm mb-6'>
             <div className='flex flex-col items-start justify-between md:flex-row mb-4'>
               <div>
                 <Badge
@@ -175,8 +175,8 @@ const TaskDetails = () => {
                 <Button
                   variant={'destructive'}
                   size="sm"
-                  onClick={() => { }} c
-                  lassName='hidden md:block'
+                  onClick={() => { }}
+                  className='hidden md:block'
                 >
                   Delete Task
                 </Button>
@@ -213,7 +213,7 @@ const TaskDetails = () => {
         </div>
 
         {/* right side */}
-        <div className='w-[30%]'>
+        <div className='w-full lg:w-[30%]'>
           <Watchers watchers={task.watchers || []} />
 
           <TaskActivity resourceId={task._id} />

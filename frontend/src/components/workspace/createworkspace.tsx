@@ -112,7 +112,7 @@ const CreateWorkspace = ({
                                     <FormItem>
                                         <FormLabel>Color</FormLabel>
                                         <FormControl>
-                                            <div className='flex gap-3'>
+                                            <div className='flex flex-wrap gap-3'>
                                                 {
                                                     colorOptions.map((color) => (
                                                         <div

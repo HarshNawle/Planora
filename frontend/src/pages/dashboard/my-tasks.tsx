@@ -93,7 +93,7 @@ const MyTasks = () => {
 
     return (
         <div className='space-y-6'>
-            <div className='flex items-start md:items-center justify-between'>
+            <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
                 <h1 className='text-2xl font-bold'>My Tasks</h1>
 
                 <div className='flex flex-col gap-2 items-start md:flex-row'>

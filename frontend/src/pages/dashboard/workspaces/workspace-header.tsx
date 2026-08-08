@@ -40,12 +40,12 @@ const WorkspaceHeader = ({
             </h2>
           </div>
 
-          <div className='text-xl flex items-center gap-3 justify-between md:justify-start mb-4  md:mb-0 ' >
-            <Button variant={'outline'} onClick={onInviteMember} className='cursor-pointer'>
+          <div className='flex flex-wrap items-center gap-3 justify-between md:justify-start mb-4 md:mb-0' >
+            <Button variant={'outline'} onClick={onInviteMember} className='cursor-pointer flex-1 sm:flex-none'>
               <UserPlus className='size-4 mr-2' />
               Invite
             </Button>
-            <Button onClick={onCreateProject} >
+            <Button onClick={onCreateProject} className='flex-1 sm:flex-none' >
               <Plus className='mr-2 size-4' />
               Create Project
             </Button>

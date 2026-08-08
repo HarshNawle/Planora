@@ -22,8 +22,8 @@ const ProjectCard = ({
     <Link to={`/workspaces/${workspaceId}/projects/${project._id}`} >
       <Card className='transition-all duration-300 hover:shadow-md hover:translate-y-1'>
         <CardHeader>
-          <div className='flex items-center justify-between'>
-            <CardTitle>{project.title}</CardTitle>
+          <div className='flex items-center justify-between gap-2'>
+            <CardTitle className='truncate min-w-0'>{project.title}</CardTitle>
             <span className={cn("text-xs rounded-full", getTaskStatusColor(project.status))}>
               {
                 project.status

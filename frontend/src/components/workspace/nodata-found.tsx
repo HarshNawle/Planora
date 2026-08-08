@@ -19,7 +19,7 @@ const NoDataFound = ({
       <LayoutGrid className='size-12 mx-auto text-muted-foreground' />
       <h3 className='mt-4 text-lg font-semibold' >{title}</h3>
 
-      <p className='mt-2 text-sm text-muted-foreground mx-w-sm mx-auto' >{description}</p>
+      <p className='mt-2 text-sm text-muted-foreground max-w-sm mx-auto px-4 text-center' >{description}</p>
       <Button className='mt-4' onClick={buttonAction} >
         <CirclePlus className="size-4 mr-2" />
         {buttonText}

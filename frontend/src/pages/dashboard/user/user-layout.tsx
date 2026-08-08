@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom'
 
 const UserLayout = () => {
   return (
-    <div className='container max-w-3xl mx-auto py-8 md:py-16'>
+    <div className='container max-w-3xl mx-auto px-4 py-8 md:py-16'>
         <Outlet/>
     </div>
   )

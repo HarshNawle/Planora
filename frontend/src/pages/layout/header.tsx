@@ -3,21 +3,24 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import WorkspaceAvatar from '@/components/workspace/workspace-avatar';
 import { useGetWorkspacesQuery } from '@/hooks/use-workspace';
+import { setStoredWorkspaceId } from '@/lib/workspace-storage';
 import { useAuth } from '@/provider/auth-context';
 import type { Workspace } from '@/types'
-import { Bell, CircleUserRound, LogOut, PlusCircle } from 'lucide-react';
+import { Bell, CircleUserRound, LogOut, Menu, PlusCircle } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
     onWorkspaceSelected: (Workspace: Workspace) => void;
     selectedWorkspace: Workspace | null;
-    onCreateWorkspace: () => void
+    onCreateWorkspace: () => void;
+    onOpenMobileSidebar: () => void;
 }
 
 const Header = ({
     onWorkspaceSelected,
     selectedWorkspace,
-    onCreateWorkspace
+    onCreateWorkspace,
+    onOpenMobileSidebar
 }: HeaderProps) => {
     const navigate = useNavigate();
     const { user, logout } = useAuth();
@@ -27,6 +30,7 @@ const Header = ({
 
     const handleOnClick = ( workspace: Workspace ) => {
         onWorkspaceSelected(workspace);
+        setStoredWorkspaceId(workspace._id);
         const location = window.location;
 
         if(isOnWorkspacePage){
@@ -39,17 +43,28 @@ const Header = ({
 
     return (
         <div className='bg-background top-0 z-40 borber-b'>
-            <div className='h-14 flex items-center justify-between px-4 py-4 sm:px-4 lg:px-8'>
+        <div className='h-14 flex items-center justify-between gap-2 px-3 sm:px-4 lg:px-8'>
+            <div className='flex items-center gap-2 min-w-0'>
+                <Button
+                    variant={"ghost"}
+                    size={"icon"}
+                    className='lg:hidden shrink-0'
+                    onClick={onOpenMobileSidebar}
+                    aria-label="Open menu"
+                >
+                    <Menu className='size-5' />
+                </Button>
+
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="flex items-center gap-2">
+                        <Button variant="outline" className="flex items-center gap-2 max-w-[55vw] sm:max-w-xs">
                             {selectedWorkspace ? (
                                 <>
                                     <WorkspaceAvatar
                                         color={selectedWorkspace.color}
                                         name={selectedWorkspace.name}
                                     />
-                                    <span className="font-medium">
+                                    <span className="font-medium truncate">
                                         {selectedWorkspace.name}
                                     </span>
                                 </>
@@ -85,8 +100,9 @@ const Header = ({
 
                     </DropdownMenuContent>
                 </DropdownMenu>
+            </div>
 
-                <div className='flex gap-2 items-center'>
+            <div className='flex gap-2 items-center shrink-0'>
                     <Button variant={"ghost"} size="icon">
                         <Bell />
                     </Button>

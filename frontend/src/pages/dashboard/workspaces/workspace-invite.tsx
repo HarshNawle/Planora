@@ -72,8 +72,8 @@ const WorkspaceInvite = () => {
 
     if (!workspaceId) {
         return (
-            <div className='flex items-center justify-center h-screen'>
-                <Card className='max-w-md'>
+            <div className='flex items-center justify-center h-screen p-4'>
+                <Card className='max-w-md w-full'>
                     <CardHeader>
                         <CardTitle>Invalid Invitation</CardTitle>
                         <CardDescription>
@@ -91,7 +91,7 @@ const WorkspaceInvite = () => {
     }
 
     return (
-        <div className=' flex items-center justify-center h-screen'>
+        <div className=' flex items-center justify-center h-screen p-4'>
             <Card className='max-w-md w-full'>
                 <CardHeader>
                     <div className='flex items-center gap-3 mb-2'>

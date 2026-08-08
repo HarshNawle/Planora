@@ -242,7 +242,7 @@ const CreateTaskDialog = ({
                               </Button>
                             </PopoverTrigger>
 
-                            <PopoverContent className='w-sm max-h-60 overflow-y-auto p-2' align='start'>
+                            <PopoverContent className='w-sm max-w-[calc(100vw-2rem)] max-h-60 overflow-y-auto p-2' align='start'>
                               <div className='flex flex-col gap-2'>
                                 {
                                   projectMembers.map((member) => {
