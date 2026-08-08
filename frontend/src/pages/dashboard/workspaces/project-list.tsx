@@ -1,5 +1,6 @@
 import NoDataFound from '@/components/workspace/nodata-found';
 import ProjectCard from '@/pages/project/project-card';
+import { getProjectProgress } from '@/lib';
 import type { Project } from '@/types';
 interface ProjectListProps {
   workspaceId: string;
@@ -24,7 +25,7 @@ const ProjectList = ({ workspaceId, projects, onCreateProject }: ProjectListProp
             (
               <div className='grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
                 {projects.map((project) => {
-                  const projectProgress = 0;
+                  const projectProgress = getProjectProgress(project.tasks);
 
                   return (
                     <ProjectCard

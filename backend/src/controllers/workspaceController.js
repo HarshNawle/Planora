@@ -102,7 +102,7 @@ export const getWorkspaceProjects = async (req, res) => {
       isArchived: false,
       // members: { $in: [req.user._id] }, // if user is member of PRoject 
     })
-      // .populate("tasks", "status")
+      .populate("tasks", "status isArchived")
       .sort({ createdAt: -1 });
 
     res.status(200).json({ projects, workspace });
