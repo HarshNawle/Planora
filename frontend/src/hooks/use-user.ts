@@ -17,7 +17,7 @@ export const useChangePassword = () => {
     return useMutation(
         {
            mutationFn: (data: ChangePasswordFormData) => 
-            updateData("/user/change-password", data)
+            updateData("/users/change-password", data)
         }
     )
 };
@@ -26,7 +26,7 @@ export const useUploadUserProfile = () => {
     return useMutation(
         {
            mutationFn: (data: ProfileFormData) => 
-            updateData("/user/profile", data)
+            updateData("/users/profile", data)
         }
     )
 };

@@ -2,7 +2,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form,FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -13,7 +13,7 @@ import type { User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Form, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import z from "zod";
 
@@ -151,8 +151,8 @@ const Profile = () => {
                                         type="text"
                                         id="avatar-upload"
                                         accept="image/*"
-                                        onChange={handleAvatarChange}
-                                        disabled={uploading || isUpdatingProfile}
+                                        // onChange={handleAvatarChange}
+                                        // disabled={uploading || isUpdatingProfile}
                                         style={{ display: "none" }}
                                     />
 
@@ -161,7 +161,7 @@ const Profile = () => {
                                         size="sm"
                                         variant="outline"
                                         onClick={() => document.getElementById("avatar-upload")?.click()}
-                                        disabled={uploading || isUpdatingProfile}
+                                        // disabled={uploading || isUpdatingProfile}
                                     >
                                         Change Avatar
                                     </Button>
@@ -196,7 +196,7 @@ const Profile = () => {
                             <Button
                                 type="submit"
                                 className="w-fit"
-                                disabled={isUpdatingProfile || isPending || uploading}
+                                disabled={isUpdatingProfile || isPending }
                             >
                                 {
                                     isUpdatingProfile ? (

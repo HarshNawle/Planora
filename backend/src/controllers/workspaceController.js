@@ -56,9 +56,7 @@ export const getWorkspaceDetails = async (req, res) => {
   try {
     const { workspaceId } = req.params;
 
-    const workspace = await Workspace.findById({
-      _id: workspaceId,
-    })
+    const workspace = await Workspace.findById(workspaceId)
       .populate(
         "members.user",
         "fullName email profilePicture"
@@ -212,7 +210,7 @@ export const getWorkspaceStats = async (req, res) => {
     // populate
 
     for (const project of projects) {
-      for (const task in project.tasks) {
+      for (const task of project.tasks) {
         const taskDate = new Date(task.updatedAt);
 
         const dayInDate = last7Days.findIndex(

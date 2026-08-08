@@ -1,6 +1,6 @@
 import express from "express";
 import { validateRequest } from "zod-express-middleware";
-import { changePassword, updateUserProfile } from "../controllers/userController.js";
+import { changePassword, getUserProfile, updateUserProfile } from "../controllers/userController.js";
 import authMiddleware from "../middleware/auth-middleware.js";
 import z from "zod";
 

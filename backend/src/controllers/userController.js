@@ -19,7 +19,7 @@ export const getUserProfile = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
     try {
-        const { fullName, profilePicture } = req.body();
+        const { name, profilePicture } = req.body;
 
         const user = await User.findById(req.user._id);
 
@@ -27,7 +27,7 @@ export const updateUserProfile = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        user.fullName = fullName;
+        user.fullName = name;
         user.profilePicture = profilePicture;
 
         await user.save();
@@ -59,7 +59,7 @@ export const changePassword = async (req, res) => {
         );
 
         if(!isPasswordValid) {
-            return req.status(403).json({ message: "Invalid old password" })
+            return res.status(403).json({ message: "Invalid old password" })
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
